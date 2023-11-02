@@ -1,5 +1,13 @@
 const pieces = ["rook","knight","bishop","queen","king","bishop","knight","rook"];
 let selectedPiece;
+
+let greyCircle = createGreyCircle();
+
+function globalGreyCheck(checkSquare) {
+    greyCircle = createGreyCircle();
+    checkSquare.appendChild(greyCircle);
+}
+
 const rules = {
     find_curr: function(piece) {
         const parentID = piece.parentNode.id;
@@ -20,7 +28,12 @@ const rules = {
                 let checkSquare;
                 if (toStay == "row") checkSquare = document.getElementById(`${index}${currCol}`);
                 else checkSquare = document.getElementById(`${currRow}${index}`)
-                if (index < 0 || index > 7 || checkSquare.hasChildNodes()) break;
+                if (index < 0 || index > 7) break;
+                // make capturable piece
+                if (checkSquare.hasChildNodes()) {
+                    capturable(currColor,checkSquare);
+                    break;
+                }
                 // make a grey circle in the square
                 let greyCircle = createGreyCircle();
                 checkSquare.appendChild(greyCircle);
@@ -50,11 +63,17 @@ const rules = {
             let checkSquare;
             let greyCircle;
             checkSquare = document.getElementById(`${row}${j1}`);
+            if (checkSquare.hasChildNodes()) {
+                capturable(currColor,checkSquare);
+            }
             if (j1 >= 0 && !checkSquare.hasChildNodes()){
                 greyCircle = createGreyCircle();
                 checkSquare.appendChild(greyCircle);
             }
             checkSquare = document.getElementById(`${row}${j2}`);
+            if (checkSquare.hasChildNodes()) {
+                capturable(currColor,checkSquare);
+            }
             if (j2 < 8 && !checkSquare.hasChildNodes()) {
                 greyCircle = createGreyCircle();
                 checkSquare.appendChild(greyCircle);
@@ -79,7 +98,11 @@ const rules = {
                 row += iterateRow
                 col += iterateCol
                 checkSquare = document.getElementById(`${row}${col}`);
-                if (row < 0 || row > 7 || col < 0 || col > 7 || checkSquare.hasChildNodes()) break;
+                if (row < 0 || row > 7 || col < 0 || col > 7 ) break;
+                if (checkSquare.hasChildNodes()) {
+                    capturable(currColor,checkSquare);
+                    break;
+                }
                 greyCircle = createGreyCircle();
                 checkSquare.appendChild(greyCircle);
             }
@@ -100,7 +123,11 @@ const rules = {
                 row += iterateRow
                 col += iterateCol
                 checkSquare = document.getElementById(`${row}${col}`);
-                if (row < 0 || row > 7 || col < 0 || col > 7 || checkSquare.hasChildNodes()) break;
+                if (row < 0 || row > 7 || col < 0 || col > 7) break;
+                if (checkSquare.hasChildNodes()) {
+                    capturable(currColor,checkSquare);
+                    break;
+                }
                 greyCircle = createGreyCircle();
                 checkSquare.appendChild(greyCircle);
             }
@@ -119,7 +146,11 @@ const rules = {
                 let checkSquare;
                 if (toStay == "row") checkSquare = document.getElementById(`${index}${currCol}`);
                 else checkSquare = document.getElementById(`${currRow}${index}`)
-                if (index < 0 || index > 7 || checkSquare.hasChildNodes()) break;
+                if (index < 0 || index > 7) break;
+                if (checkSquare.hasChildNodes()) {
+                    capturable(currColor,checkSquare);
+                    break;
+                }
                 // make a grey circle in the square
                 let greyCircle = createGreyCircle();
                 checkSquare.appendChild(greyCircle);
@@ -150,6 +181,8 @@ const rules = {
                         if (!checkSquare.hasChildNodes()) {
                             let greyCircle = createGreyCircle();
                             checkSquare.appendChild(greyCircle);
+                        } else {
+                            capturable(currColor,checkSquare);
                         }
                     }
                 }
@@ -169,11 +202,15 @@ const rules = {
                 greyCircle = createGreyCircle();
                 checkSquare.appendChild(greyCircle);
             }
-            if (currRow == 6) {
-                checkSquare = document.getElementById(`${currRow-2}${currCol}`);
+            checkSquare = document.getElementById(`${currRow-2}${currCol}`);
+            if (currRow == 6 && !checkSquare.hasChildNodes()) {
                 greyCircle = createGreyCircle();
                 checkSquare.appendChild(greyCircle);
             }
+            checkSquare = document.getElementById(`${currRow-1}${currCol-1}`);
+            if (checkSquare.hasChildNodes()) capturable(currColor,checkSquare);
+            checkSquare = document.getElementById(`${currRow-1}${currCol+1}`);
+            if (checkSquare.hasChildNodes()) capturable(currColor,checkSquare);
         } else {
             let checkSquare = document.getElementById(`${currRow+1}${currCol}`);
             let greyCircle;
@@ -181,19 +218,30 @@ const rules = {
                 greyCircle = createGreyCircle();
                 checkSquare.appendChild(greyCircle);
             }
-            if (currRow == 1) {
-                checkSquare = document.getElementById(`${currRow+2}${currCol}`);
+            checkSquare = document.getElementById(`${currRow+2}${currCol}`);
+            if (currRow == 1 && !checkSquare.hasChildNodes()) {
                 greyCircle = createGreyCircle();
                 checkSquare.appendChild(greyCircle);
             }
+            checkSquare = document.getElementById(`${currRow+1}${currCol-1}`);
+            if (checkSquare.hasChildNodes()) capturable(currColor,checkSquare);
+            checkSquare = document.getElementById(`${currRow+1}${currCol+1}`);
+            if (checkSquare.hasChildNodes()) capturable(currColor,checkSquare);
         }
     }
 };
 
+function capturable(currPieceColor,parentofOther) {
+    const otherPiece = parentofOther.children[0];
+    const otherPieceColor = (Array.from(otherPiece.classList))[1];
+    if (otherPieceColor != currPieceColor) {
+        parentofOther.classList.add("capturable");
+    }
+}
 function createGreyCircle() {
     let div = document.createElement("div");
     div.className = "greyCircle";
-    return div
+    return div;
 }
 
 function removeGreyCircle() {
@@ -201,7 +249,11 @@ function removeGreyCircle() {
     circles.forEach(function(element) {
         element.remove();
       });
-}
+    const capturableElements = document.querySelectorAll(".capturable");
+    capturableElements.forEach(element => {
+        element.classList.remove("capturable");
+    });
+}   
 function load() {
     let alt = -1
     for (let i = 0; i < 8; i++) {
@@ -258,9 +310,15 @@ function load() {
             e.preventDefault();
         });
         square.addEventListener("drop", (e) => {
+            if (square.classList.contains("capturable")) {
+                let child = square.children[0];
+                square.removeChild(child);
+                square.appendChild(selectedPiece);
+            }
             if (square.lastChild.className == "greyCircle") square.appendChild(selectedPiece);
             selectedPiece = null;
             removeGreyCircle();
+
         });
         square.addEventListener("click", (e) => {
             if (square.lastChild.className == "greyCircle")
