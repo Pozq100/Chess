@@ -1,60 +1,61 @@
-
 #container {
-    height: 650px;
-    width: 1200px;
-    margin: 0 auto;
+  height: 650px;
+  width: 1200px;
+  margin: 0 auto;
 }
 
-#board, #side {
-    border: 1px solid black;
-    float: left;
+#board,
+#side {
+  border: 1px solid black;
+  float: left;
 }
 
 #board {
-    height: 640px;
-    width: 800px;
-    display: flex;
-    flex-wrap: wrap;
+  height: 720px;
+  width: 720px;
+  display: flex;
+  flex-wrap: wrap;
 }
 
 #side {
-    height: 640px;
-    width: 300px;
+  height: 720px;
+  width: 300px;
 }
 
-.blacksquare, .whitesquare {
-    display: flex;
-    width: 100px;
-    height: 80px;
+.blacksquare,
+.whitesquare {
+  display: flex;
+  width: 90px;
+  height: 90px;
 }
 
 .piece {
-    position: relative;
-    margin: auto;
-    width: 90px;
-    height: 90px;
-    background-repeat: no-repeat;
-    background-size: contain;
-    z-index: 1px;
-    transform: translate(0, 0);
+  position: relative;
+  margin: auto;
+  width: 90px;
+  height: 90px;
+  background-repeat: no-repeat;
+  background-size: contain;
+  z-index: 1px;
+  transform: translate(0, 0);
 }
 .blacksquare {
-    background-color: #3355FF;
+  background-color: #3355ff;
 }
 
 .whitesquare {
-    background-color: cyan;
+  background-color: cyan;
 }
 
 .greyCircle {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: lightgrey;
-    z-index: 1px;
-    margin: auto;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: lightgrey;
+  z-index: 1px;
+  margin: auto;
 }
 
 .capturable {
-    background-color: gold;
+  background-color: gold;
 }
