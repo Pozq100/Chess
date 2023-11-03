@@ -28,7 +28,6 @@ const rules = {
   rook_rule: function () {
     const { currRow, currCol, currColor } = rules["find_curr"](this);
     if (currTurn != currColor) {
-      selectedPiece = null;
       return;
     }
     removeGreyCircle();
@@ -66,7 +65,6 @@ const rules = {
   knight_rule: function () {
     const { currRow, currCol, currColor } = rules["find_curr"](this);
     if (currTurn != currColor) {
-      selectedPiece = null;
       return;
     }
     removeGreyCircle();
@@ -106,7 +104,6 @@ const rules = {
   bishop_rule: function () {
     const { currRow, currCol, currColor } = rules["find_curr"](this);
     if (currTurn != currColor) {
-      selectedPiece = null;
       return;
     }
     removeGreyCircle();
@@ -138,7 +135,6 @@ const rules = {
   queen_rule: function () {
     const { currRow, currCol, currColor } = rules["find_curr"](this);
     if (currTurn != currColor) {
-      selectedPiece = null;
       return;
     }
     removeGreyCircle();
@@ -194,7 +190,6 @@ const rules = {
   king_rule: function () {
     const { currRow, currCol, currColor } = rules["find_curr"](this);
     if (currTurn != currColor) {
-      selectedPiece = null;
       return;
     }
     removeGreyCircle();
@@ -223,7 +218,6 @@ const rules = {
   pawn_rule: function () {
     const { currRow, currCol, currColor } = rules["find_curr"](this);
     if (currTurn != currColor) {
-      selectedPiece = null;
       return;
     }
     removeGreyCircle();
@@ -357,7 +351,9 @@ function load() {
       if (square.classList.contains("capturable")) {
         let child = square.children[0];
         square.removeChild(child);
+        console.log(selectedPiece);
         square.appendChild(selectedPiece);
+        removeGreyCircle();
         if (currTurn == "white") currTurn = "black";
         else if (currTurn == "black") currTurn = "white";
         selectedPiece = null;
