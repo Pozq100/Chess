@@ -64,9 +64,13 @@ const rules = {
   },
 
   knight_rule: function () {
+    const { currRow, currCol, currColor } = rules["find_curr"](this);
+    if (currTurn != currColor) {
+      selectedPiece = null;
+      return;
+    }
     removeGreyCircle();
     selectedPiece = this;
-    const { currRow, currCol, currColor } = rules["find_curr"](this);
     // i - 2: j - 1, j + 1
     // i - 1: j - 2, j + 2
     // i + 1: j - 2, j + 2
