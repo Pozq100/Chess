@@ -9,10 +9,20 @@ const pieces = [
   "rook",
 ];
 let selectedPiece;
+let KinginCheck = false;
 var currTurn = "white";
 let greyCircle = createGreyCircle();
 
 function globalGreyCheck(checkSquare, currColor) {
+  if (KinginCheck) {
+    const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
+    const parentID = checkSquare.id;
+    const currRow = parseInt(parentID[0]);
+    const currCol = parseInt(parentID[1]); 
+    if (incheck(currKing[0],null,[currRow,currCol])){
+      return;
+    }
+  }
   greyCircle = createGreyCircle();
   checkSquare.appendChild(greyCircle);
 }
@@ -34,13 +44,10 @@ const rules = {
     selectedPiece = this;
     // up is currRow - 1, down is currRow + 1, left is currCol - 1, right is currCol + 1
     function create(index, UpDown, iterate) {
-      let toStay = "col";
-      if (UpDown) toStay = "row";
       while (true) {
         index += iterate;
         let checkSquare;
-        if (toStay == "row")
-          checkSquare = document.getElementById(`${index}${currCol}`);
+        if (UpDown) checkSquare = document.getElementById(`${index}${currCol}`);
         else checkSquare = document.getElementById(`${currRow}${index}`);
         if (index < 0 || index > 7) break;
         // make capturable piece
@@ -299,23 +306,32 @@ function HandleTurnChange() {
 
   // check if the curr king is in check
   const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
-  if (incheck(currKing[0])) currKing[0].parentNode.classList.add("incheck");
+  if (incheck(currKing[0])) 
+  {
+    currKing[0].parentNode.classList.add("incheck");
+    KinginCheck = true;
+  }
   else {
     let toRemove = document.querySelectorAll(".incheck");
     toRemove.forEach(function(element) {
       element.classList.remove("incheck");
     });
+    KinginCheck = false;
   }
 }
 
-function incheck(currKing,currPosition) {
+function incheck(currKing,currPosition,blockCheck) {
   let { currRow, currCol, currColor } = rules["find_curr"](currKing);
   if (currPosition) {
     currRow = currPosition[0];
     currCol = currPosition[1];
   }
-  console.log(currRow,currCol,currColor);
-  // check the rows
+  let blockCheckRow;
+  let blockCheckCol;
+  if (blockCheck) {
+    blockCheckRow = blockCheck[0];
+    blockCheckCol = blockCheck[1];
+  }
   function checkChild(pieceType,checkSquare) {
     let child = checkSquare.children[0];
     let childColor = Array.from(child.classList)[1];
@@ -327,22 +343,23 @@ function incheck(currKing,currPosition) {
     }
     return false
   }
+  // check the rows
   function checkLine(index, UpDown, iterate) {
-    let toStay = "col";
-    if (UpDown) toStay = "row";
     while (true) {
       index += iterate;
       let checkSquare;
-      if (toStay == "row")
-        checkSquare = document.getElementById(`${index}${currCol}`);
+      if (UpDown) checkSquare = document.getElementById(`${index}${currCol}`);
       else checkSquare = document.getElementById(`${currRow}${index}`);
       if (index < 0 || index > 7) break;
-      if (checkSquare.hasChildNodes()) {
+      if (blockCheck) {
+        if (UpDown && index == blockCheckRow && currCol == blockCheckCol) break;
+        else if (!UpDown && index == blockCheckCol && currRow == blockCheckRow) break;
+      }
+      if (checkSquare.hasChildNodes() && !checkSquare.children[0].classList.contains("greyCircle")) {
         if (checkChild(["rook","queen"],checkSquare)) return true;
         break;
       }
     }
-    return false;
   }
   if (checkLine(currRow, true, -1) ||
   checkLine(currRow, true, 1) ||
@@ -355,13 +372,13 @@ function incheck(currKing,currPosition) {
       col += iterateCol;
       checkSquare = document.getElementById(`${row}${col}`);
       if (row < 0 || row > 7 || col < 0 || col > 7) break;
-      if (checkSquare.hasChildNodes()) {
+      if (blockCheck && blockCheckRow == row && blockCheckCol == col) break;
+      if (checkSquare.hasChildNodes() && !checkSquare.children[0].classList.contains("greyCircle")) {
         //check the color
         if (checkChild(["bishop","queen"],checkSquare)) return true;
         break;
       }
     }
-    return false;
   }
 
   if (checkDiag(currRow, currCol, 1, -1) ||
@@ -370,20 +387,19 @@ function incheck(currKing,currPosition) {
   checkDiag(currRow, currCol, -1, 1)) return true;
 
   //check knights
-  function  checkKnight(row, iterateCol) {
+  function checkKnight(row, iterateCol) {
     if (row < 0 || row > 7) return false;
     let j1 = currCol - iterateCol;
     let j2 = currCol + iterateCol;
     let checkSquare;
     checkSquare = document.getElementById(`${row}${j1}`);
-    if (checkSquare && checkSquare.hasChildNodes()) {
+    if (checkSquare && checkSquare.hasChildNodes() && !checkSquare.children[0].classList.contains("greyCircle")) {
       if (checkChild(["knight"],checkSquare)) return true
     }
     checkSquare = document.getElementById(`${row}${j2}`);
-    if (checkSquare && checkSquare.hasChildNodes()) {
+    if (checkSquare && checkSquare.hasChildNodes() && !checkSquare.children[0].classList.contains("greyCircle")) {
       if (checkChild(["knight"],checkSquare)) return true
     }
-    return false;
   }
 
   if (checkKnight(currRow - 2, 1) ||
@@ -395,20 +411,20 @@ function incheck(currKing,currPosition) {
 
   if (currColor == "black") {
     checkSquare = document.getElementById(`${currRow+1}${currCol-1}`);
-    if (checkSquare && checkSquare.hasChildNodes()) {
+    if (checkSquare && checkSquare.hasChildNodes() && !checkSquare.children[0].classList.contains("greyCircle")) {
       if (checkChild(["pawn"],checkSquare)) return true
     }
     checkSquare = document.getElementById(`${currRow+1}${currCol+1}`);
-    if (checkSquare && checkSquare.hasChildNodes()) {
+    if (checkSquare && checkSquare.hasChildNodes() && !checkSquare.children[0].classList.contains("greyCircle")) {
       if (checkChild(["pawn"],checkSquare)) return true
     }
   } else {
     checkSquare = document.getElementById(`${currRow-1}${currCol-1}`);
-    if (checkSquare && checkSquare.hasChildNodes()) {
+    if (checkSquare && checkSquare.hasChildNodes() && !checkSquare.children[0].classList.contains("greyCircle")) {
       if (checkChild(["pawn"],checkSquare)) return true
     }
     checkSquare = document.getElementById(`${currRow-1}${currCol+1}`);
-    if (checkSquare && checkSquare.hasChildNodes()) {
+    if (checkSquare && checkSquare.hasChildNodes() && !checkSquare.children[0].classList.contains("greyCircle")) {
       if (checkChild(["pawn"],checkSquare)) return true
     }
   }
