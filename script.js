@@ -1,3 +1,8 @@
+// what else is missing
+// checkmate feature, Game over screen
+// en passant
+// pawn promotion
+
 const pieces = [
   "rook",
   "knight",
@@ -212,7 +217,10 @@ const rules = {
           if (col >= 0 && col < 8) {
             let checkSquare = document.getElementById(`${row}${col}`);
             if (!checkSquare.hasChildNodes()) {
-              if (!incheck(this,[row,col])) globalGreyCheck(checkSquare, currColor);
+              if (!incheck(this,[row,col])) {
+                greyCircle = createGreyCircle();
+                checkSquare.appendChild(greyCircle);
+              }
             } else {
               if (!incheck(this,[row,col])) capturable(currColor, checkSquare);
             }
@@ -234,10 +242,10 @@ const rules = {
       let checkSquare = document.getElementById(`${currRow - 1}${currCol}`);
       if (!checkSquare.hasChildNodes()) {
         globalGreyCheck(checkSquare, currColor);
-      }
-      checkSquare = document.getElementById(`${currRow - 2}${currCol}`);
-      if (currRow == 6 && !checkSquare.hasChildNodes()) {
-        globalGreyCheck(checkSquare, currColor);
+        checkSquare = document.getElementById(`${currRow - 2}${currCol}`);
+        if (currRow == 6 && !checkSquare.hasChildNodes()) {
+          globalGreyCheck(checkSquare, currColor);
+        }
       }
       checkSquare = document.getElementById(`${currRow - 1}${currCol - 1}`);
       if (checkSquare && checkSquare.hasChildNodes())
@@ -249,10 +257,10 @@ const rules = {
       let checkSquare = document.getElementById(`${currRow + 1}${currCol}`);
       if (!checkSquare.hasChildNodes()) {
         globalGreyCheck(checkSquare, currColor);
-      }
-      checkSquare = document.getElementById(`${currRow + 2}${currCol}`);
-      if (currRow == 1 && !checkSquare.hasChildNodes()) {
-        globalGreyCheck(checkSquare, currColor);
+        checkSquare = document.getElementById(`${currRow + 2}${currCol}`);
+        if (currRow == 1 && !checkSquare.hasChildNodes()) {
+          globalGreyCheck(checkSquare, currColor);
+        }
       }
       checkSquare = document.getElementById(`${currRow + 1}${currCol - 1}`);
       if (checkSquare && checkSquare.hasChildNodes())
@@ -310,6 +318,10 @@ function HandleTurnChange() {
   {
     currKing[0].parentNode.classList.add("incheck");
     KinginCheck = true;
+    // if (checkmate(currKing[0])) {
+    //   // Game ended
+    //   load();
+    // }
   }
   else {
     let toRemove = document.querySelectorAll(".incheck");
