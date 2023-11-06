@@ -131,10 +131,10 @@ const rules = {
       }
     }
 
-    create(currRow - 2, 1);
-    create(currRow - 1, 2);
-    create(currRow + 2, 1);
-    create(currRow + 1, 2);
+    if (create(currRow - 2, 1) ||
+    create(currRow - 1, 2) ||
+    create(currRow + 2, 1) ||
+    create(currRow + 1, 2)) return true;
   },
 
   bishop_rule: function (element,check) {
@@ -165,10 +165,10 @@ const rules = {
       }
     }
 
-    create(currRow, currCol, 1, -1);
-    create(currRow, currCol, 1, 1);
-    create(currRow, currCol, -1, -1);
-    create(currRow, currCol, -1, 1);
+    if (create(currRow, currCol, 1, -1) ||
+    create(currRow, currCol, 1, 1) ||
+    create(currRow, currCol, -1, -1) ||
+    create(currRow, currCol, -1, 1)) return true;
   },
 
   queen_rule: function (element,check) {
@@ -196,10 +196,10 @@ const rules = {
       }
     }
 
-    createDiag(currRow, currCol, 1, -1);
-    createDiag(currRow, currCol, 1, 1);
-    createDiag(currRow, currCol, -1, -1);
-    createDiag(currRow, currCol, -1, 1);
+    if (createDiag(currRow, currCol, 1, -1) ||
+    createDiag(currRow, currCol, 1, 1) ||
+    createDiag(currRow, currCol, -1, -1) ||
+    createDiag(currRow, currCol, -1, 1)) return true;
 
     function createLine(index, UpDown, iterate) {
       let toStay = "col";
@@ -219,14 +219,10 @@ const rules = {
         if (globalGreyCheck(checkSquare, currColor, check)) return true;
       }
     }
-    // up
-    createLine(currRow, true, -1);
-    // down
-    createLine(currRow, true, 1);
-    // right
-    createLine(currCol, false, 1);
-    //left
-    createLine(currCol, false, -1);
+    if (createLine(currRow, true, -1) ||
+    createLine(currRow, true, 1) ||
+    createLine(currCol, false, 1) ||
+    createLine(currCol, false, -1)) return true;
   },
 
   king_rule: function (element,check) {
