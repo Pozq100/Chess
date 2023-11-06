@@ -299,6 +299,15 @@ function removeGreyCircle() {
 }
 
 function HandleTurnChange() {
+  // check for pawn promotion
+  let pieceType = Array.from(selectedPiece.classList)[2];
+  let pieceColor = Array.from(selectedPiece.classList)[1];
+  let pieceRow = parseInt(selectedPiece.parentNode.id[0]);
+  if (pieceType == "pawn" && pieceColor == "white" && pieceRow == 0) {
+    console.log("promote");
+  } else if (pieceType == "pawn" && pieceColor == "black" && pieceRow == 7) {
+    console.log("promote");
+  }
   // make it so that only the pieces of the same color as currTurn can be dragged
   const dragpieces = document.querySelectorAll(`.${currTurn}`);
   dragpieces.forEach( function(element){
@@ -443,6 +452,9 @@ function incheck(currKing,currPosition,blockCheck) {
 
   return false;
 }
+// function checkmate() {
+  
+// }
 
 function load() {
   let alt = -1;
@@ -509,7 +521,6 @@ function load() {
       removeGreyCircle();
       HandleTurnChange();
       selectedPiece = null;
-      removeGreyCircle();
     });
     square.addEventListener("click", (e) => {
       if (square.classList.contains("capturable")) {
