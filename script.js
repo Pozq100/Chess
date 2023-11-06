@@ -18,7 +18,7 @@ let KinginCheck = false;
 var currTurn = "white";
 let greyCircle = createGreyCircle();
 
-function globalGreyCheck(checkSquare, currColor) {
+function globalGreyCheck(checkSquare, currColor, check) {
   if (KinginCheck) {
     const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
     const parentID = checkSquare.id;
@@ -28,8 +28,27 @@ function globalGreyCheck(checkSquare, currColor) {
       return;
     }
   }
+  if (check) return true;
   greyCircle = createGreyCircle();
   checkSquare.appendChild(greyCircle);
+}
+
+function capturable(currPieceColor, parentofOther,check) {
+  const otherPiece = parentofOther.children[0];
+  const otherPieceColor = Array.from(otherPiece.classList)[1];
+  if (KinginCheck) {
+    const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
+    const parentID = parentofOther.id;
+    const currRow = parseInt(parentID[0]);
+    const currCol = parseInt(parentID[1]);
+    if (incheck(currKing[0],null,[currRow,currCol])){
+      return;
+    }
+  }
+  if (check) return true;
+  if (otherPieceColor != currPieceColor) {
+    parentofOther.classList.add("capturable");
+  }
 }
 
 const rules = {
@@ -40,13 +59,16 @@ const rules = {
     const currColor = Array.from(piece.classList)[1];
     return { currRow, currCol, currColor };
   },
-  rook_rule: function () {
-    const { currRow, currCol, currColor } = rules["find_curr"](this);
+  rook_rule: function (element,check) {
+    if (!check) {
+      element = this;
+    }
+    const { currRow, currCol, currColor } = rules["find_curr"](element);
     if (currTurn != currColor) {
       return;
     }
     removeGreyCircle();
-    selectedPiece = this;
+    selectedPiece = element;
     // up is currRow - 1, down is currRow + 1, left is currCol - 1, right is currCol + 1
     function create(index, UpDown, iterate) {
       while (true) {
@@ -57,11 +79,11 @@ const rules = {
         if (index < 0 || index > 7) break;
         // make capturable piece
         if (checkSquare.hasChildNodes()) {
-          capturable(currColor, checkSquare);
+          if (capturable(currColor, checkSquare,check)) return true;
           break;
         }
         // make a grey circle in the square
-        globalGreyCheck(checkSquare, currColor);
+        if (globalGreyCheck(checkSquare, currColor, check)) return true;
       }
     }
     // up
@@ -74,13 +96,16 @@ const rules = {
     create(currCol, false, -1);
   },
 
-  knight_rule: function () {
-    const { currRow, currCol, currColor } = rules["find_curr"](this);
+  knight_rule: function (element,check) {
+    if (!check) {
+      element = this;
+    }
+    const { currRow, currCol, currColor } = rules["find_curr"](element);
     if (currTurn != currColor) {
       return;
     }
     removeGreyCircle();
-    selectedPiece = this;
+    selectedPiece = element;
     // i - 2: j - 1, j + 1
     // i - 1: j - 2, j + 2
     // i + 1: j - 2, j + 2
@@ -90,20 +115,19 @@ const rules = {
       let j1 = currCol - iterateCol;
       let j2 = currCol + iterateCol;
       let checkSquare;
-      let greyCircle;
       checkSquare = document.getElementById(`${row}${j1}`);
       if (checkSquare && checkSquare.hasChildNodes()) {
-        capturable(currColor, checkSquare);
+        if (capturable(currColor, checkSquare,check)) return true;
       }
       if (j1 >= 0 && !checkSquare.hasChildNodes()) {
-        globalGreyCheck(checkSquare, currColor);
+        if (globalGreyCheck(checkSquare, currColor, check)) return true;
       }
       checkSquare = document.getElementById(`${row}${j2}`);
       if (checkSquare && checkSquare.hasChildNodes()) {
-        capturable(currColor, checkSquare);
+        if (capturable(currColor, checkSquare,check)) return true;
       }
       if (j2 < 8 && !checkSquare.hasChildNodes()) {
-        globalGreyCheck(checkSquare, currColor);
+        if (globalGreyCheck(checkSquare, currColor, check)) return true;
       }
     }
 
@@ -113,13 +137,16 @@ const rules = {
     create(currRow + 1, 2);
   },
 
-  bishop_rule: function () {
-    const { currRow, currCol, currColor } = rules["find_curr"](this);
+  bishop_rule: function (element,check) {
+    if (!check) {
+      element = this;
+    }
+    const { currRow, currCol, currColor } = rules["find_curr"](element);
     if (currTurn != currColor) {
       return;
     }
     removeGreyCircle();
-    selectedPiece = this;
+    selectedPiece = element;
     // i + 1, j - 1
     // i + 1, j + 1
     // i - 1, j - 1
@@ -131,10 +158,10 @@ const rules = {
         checkSquare = document.getElementById(`${row}${col}`);
         if (row < 0 || row > 7 || col < 0 || col > 7) break;
         if (checkSquare.hasChildNodes()) {
-          capturable(currColor, checkSquare);
+          if (capturable(currColor, checkSquare,check)) return true;
           break;
         }
-        globalGreyCheck(checkSquare, currColor);
+        if (globalGreyCheck(checkSquare, currColor, check)) return true;
       }
     }
 
@@ -144,13 +171,16 @@ const rules = {
     create(currRow, currCol, -1, 1);
   },
 
-  queen_rule: function () {
-    const { currRow, currCol, currColor } = rules["find_curr"](this);
+  queen_rule: function (element,check) {
+    if (!check) {
+      element = this;
+    }
+    const { currRow, currCol, currColor } = rules["find_curr"](element);
     if (currTurn != currColor) {
       return;
     }
     removeGreyCircle();
-    selectedPiece = this;
+    selectedPiece = element;
 
     function createDiag(row, col, iterateRow, iterateCol) {
       while (true) {
@@ -159,10 +189,10 @@ const rules = {
         checkSquare = document.getElementById(`${row}${col}`);
         if (row < 0 || row > 7 || col < 0 || col > 7) break;
         if (checkSquare.hasChildNodes()) {
-          capturable(currColor, checkSquare);
+          if (capturable(currColor, checkSquare,check)) return true;
           break;
         }
-        globalGreyCheck(checkSquare, currColor);
+        if (globalGreyCheck(checkSquare, currColor, check)) return true;
       }
     }
 
@@ -182,11 +212,11 @@ const rules = {
         else checkSquare = document.getElementById(`${currRow}${index}`);
         if (index < 0 || index > 7) break;
         if (checkSquare.hasChildNodes()) {
-          capturable(currColor, checkSquare);
+          if (capturable(currColor, checkSquare,check)) return true;
           break;
         }
         // make a grey circle in the square
-        globalGreyCheck(checkSquare, currColor);
+        if (globalGreyCheck(checkSquare, currColor, check)) return true;
       }
     }
     // up
@@ -199,13 +229,16 @@ const rules = {
     createLine(currCol, false, -1);
   },
 
-  king_rule: function () {
-    const { currRow, currCol, currColor } = rules["find_curr"](this);
+  king_rule: function (element,check) {
+    if (!check) {
+      element = this;
+    }
+    const { currRow, currCol, currColor } = rules["find_curr"](element);
     if (currTurn != currColor) {
       return;
     }
     removeGreyCircle();
-    selectedPiece = this;
+    selectedPiece = element;
 
     let topleftRow = currRow - 1;
     let topleftCol = currCol - 1;
@@ -217,12 +250,16 @@ const rules = {
           if (col >= 0 && col < 8) {
             let checkSquare = document.getElementById(`${row}${col}`);
             if (!checkSquare.hasChildNodes()) {
-              if (!incheck(this,[row,col])) {
+              if (!incheck(element,[row,col])) {
+                if (check) return true;
                 greyCircle = createGreyCircle();
                 checkSquare.appendChild(greyCircle);
               }
             } else {
-              if (!incheck(this,[row,col])) capturable(currColor, checkSquare);
+              if (!incheck(element,[row,col]))
+              {
+                if (capturable(currColor, checkSquare,check)) return true;
+              }
             }
           }
         }
@@ -230,8 +267,11 @@ const rules = {
     }
   },
 
-  pawn_rule: function () {
-    const { currRow, currCol, currColor } = rules["find_curr"](this);
+  pawn_rule: function (element,check) {
+    if (!check) {
+      element = this;
+    }
+    const { currRow, currCol, currColor } = rules["find_curr"](element);
     if (currTurn != currColor) {
       return;
     }
@@ -241,45 +281,37 @@ const rules = {
     if (currColor == "white") {
       let checkSquare = document.getElementById(`${currRow - 1}${currCol}`);
       if (!checkSquare.hasChildNodes()) {
-        globalGreyCheck(checkSquare, currColor);
+        if (globalGreyCheck(checkSquare, currColor, check)) return true;
         checkSquare = document.getElementById(`${currRow - 2}${currCol}`);
         if (currRow == 6 && !checkSquare.hasChildNodes()) {
-          globalGreyCheck(checkSquare, currColor);
+          if (globalGreyCheck(checkSquare, currColor, check)) return true;
         }
       }
       checkSquare = document.getElementById(`${currRow - 1}${currCol - 1}`);
       if (checkSquare && checkSquare.hasChildNodes())
-        capturable(currColor, checkSquare);
+        if (capturable(currColor, checkSquare,check)) return true;
       checkSquare = document.getElementById(`${currRow - 1}${currCol + 1}`);
       if (checkSquare && checkSquare.hasChildNodes())
-        capturable(currColor, checkSquare);
+        if (capturable(currColor, checkSquare,check)) return true;
     } else {
       let checkSquare = document.getElementById(`${currRow + 1}${currCol}`);
       if (!checkSquare.hasChildNodes()) {
-        globalGreyCheck(checkSquare, currColor);
+        if (globalGreyCheck(checkSquare, currColor, check)) return true;
         checkSquare = document.getElementById(`${currRow + 2}${currCol}`);
         if (currRow == 1 && !checkSquare.hasChildNodes()) {
-          globalGreyCheck(checkSquare, currColor);
+          if (globalGreyCheck(checkSquare, currColor, check)) return true;
         }
       }
       checkSquare = document.getElementById(`${currRow + 1}${currCol - 1}`);
       if (checkSquare && checkSquare.hasChildNodes())
-        capturable(currColor, checkSquare);
+        if (capturable(currColor, checkSquare,check)) return true;
       checkSquare = document.getElementById(`${currRow + 1}${currCol + 1}`);
       if (checkSquare && checkSquare.hasChildNodes())
-        capturable(currColor, checkSquare);
+        if (capturable(currColor, checkSquare,check)) return true;
     }
-    selectedPiece = this;
+    selectedPiece = element;
   },
 };
-
-function capturable(currPieceColor, parentofOther) {
-  const otherPiece = parentofOther.children[0];
-  const otherPieceColor = Array.from(otherPiece.classList)[1];
-  if (otherPieceColor != currPieceColor) {
-    parentofOther.classList.add("capturable");
-  }
-}
 
 function createGreyCircle() {
   let div = document.createElement("div");
@@ -327,10 +359,11 @@ function HandleTurnChange() {
   {
     currKing[0].parentNode.classList.add("incheck");
     KinginCheck = true;
-    // if (checkmate(currKing[0])) {
-    //   // Game ended
-    //   load();
-    // }
+     if (checkmate()) {
+       // Game ended
+       console.log("checkmateeeeaeeeeeeeeeeeeeeeeeee");
+       load();
+     }
   }
   else {
     let toRemove = document.querySelectorAll(".incheck");
@@ -452,9 +485,17 @@ function incheck(currKing,currPosition,blockCheck) {
 
   return false;
 }
-// function checkmate() {
-  
-// }
+function checkmate() {
+  const allyPieces = document.querySelectorAll(`.${currTurn}`);
+  let check = true;
+  allyPieces.forEach((eachPiece) => {
+    let pieceType = Array.from(eachPiece.classList)[2];
+    if (rules[`${pieceType}_rule`](eachPiece,true)) {
+      check = false;
+    }
+  });
+  return check;
+}
 
 function load() {
   let alt = -1;
