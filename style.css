@@ -34,8 +34,8 @@
 .piece {
   position: relative;
   margin: auto;
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   background-repeat: no-repeat;
   background-size: contain;
   z-index: 1px;
@@ -71,6 +71,15 @@
   height: 160px;
   width: 160px;
   background: red;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  z-index: 3;
+}
+#promoteOption {
+  height: 80px;
+  width: 80px;
 }
 
 #gameover {

@@ -15,6 +15,9 @@ const pieces = [
   "knight",
   "rook",
 ];
+
+const promotePiece = ["rook", "knight", "bishop", "queen"];
+
 let selectedPiece;
 var currTurn = "white";
 let greyCircle = createGreyCircle();
@@ -333,10 +336,13 @@ function HandleTurnChange() {
   let pieceType = Array.from(selectedPiece.classList)[2];
   let pieceColor = Array.from(selectedPiece.classList)[1];
   let pieceRow = parseInt(selectedPiece.parentNode.id[0]);
+  let pieceID = selectedPiece.parentNode;
   if (pieceType == "pawn" && pieceColor == "white" && pieceRow == 0) {
-    console.log("promote");
+    console.log("promote white");
+    promotion(pieceColor, pieceID);
   } else if (pieceType == "pawn" && pieceColor == "black" && pieceRow == 7) {
-    console.log("promote");
+    console.log("promote black");
+    promotion(pieceColor, pieceID);
   }
   // make it so that only the pieces of the same color as currTurn can be dragged
   const dragpieces = document.querySelectorAll(`.${currTurn}`);
@@ -461,7 +467,7 @@ function incheck(currKing, currPosition, blockCheck) {
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
     ) {
-        if (checkChild(["knight"], checkSquare)) return true;
+      if (checkChild(["knight"], checkSquare)) return true;
     }
     checkSquare = document.getElementById(`${row}${j2}`);
     if (
@@ -470,7 +476,7 @@ function incheck(currKing, currPosition, blockCheck) {
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
     ) {
-        if (checkChild(["knight"], checkSquare)) return true;
+      if (checkChild(["knight"], checkSquare)) return true;
     }
   }
 
@@ -492,7 +498,7 @@ function incheck(currKing, currPosition, blockCheck) {
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
     ) {
-        if (checkChild(["pawn"], checkSquare)) return true;
+      if (checkChild(["pawn"], checkSquare)) return true;
     }
     checkSquare = document.getElementById(`${currRow + 1}${currCol + 1}`);
     if (
@@ -501,7 +507,7 @@ function incheck(currKing, currPosition, blockCheck) {
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
     ) {
-        if (checkChild(["pawn"], checkSquare)) return true;
+      if (checkChild(["pawn"], checkSquare)) return true;
     }
   } else {
     checkSquare = document.getElementById(`${currRow - 1}${currCol - 1}`);
@@ -536,6 +542,31 @@ function checkmate() {
     }
   });
   return check;
+}
+
+function promotion(color, ID) {
+  let board = document.getElementById("board");
+  let div = document.createElement("div");
+  div.id = "promotion";
+  board.appendChild(div);
+  console.log(color);
+  for (let i = 0; i < 4; i++) {
+    let createDiv = document.createElement("div");
+    let currPiece = promotePiece[i];
+    createDiv.className = "piece";
+    createDiv.classList.add(color);
+    createDiv.classList.add(currPiece);
+    createDiv.style = `background-image: url(./images/${color}_${currPiece}.png)`;
+    createDiv.onclick = function () {
+      promote(ID, currPiece);
+    };
+    div.appendChild(createDiv);
+  }
+}
+
+function promote(square, piece) {
+  square.removeChild(square.lastChild);
+  square.appendChild(piece);
 }
 
 function load() {
