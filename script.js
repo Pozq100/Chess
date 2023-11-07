@@ -15,10 +15,20 @@ const pieces = [
 
 const promotePiece = ["rook", "knight", "bishop", "queen"];
 
+var castlingPieces = {
+  whiteKing: false,
+  whiteLeftRook: false,
+  whiteRightRook: false,
+  blackKing: false,
+  blackLeftRook: false,
+  blackRightRook: false
+};
+
 var promotionProgress = false;
 let selectedPiece;
 var currTurn = "white";
 let greyCircle = createGreyCircle();
+let prevKingPos;
 
 function globalGreyCheck(checkSquare, currColor, check) {
   const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
@@ -265,6 +275,7 @@ const rules = {
         }
       }
     }
+    handleCastling(element,currColor);
   },
 
   pawn_rule: function (element, check) {
@@ -311,7 +322,127 @@ const rules = {
     }
   },
 };
+function handleCastling(currKing, currColor) {
+  let currKingparentID = currKing.parentNode.id;
+  let leftSquareID = (parseInt(currKingparentID) - 1).toString();
+  let leftSquare2ID = (parseInt(currKingparentID) - 2).toString();
+  let leftSquare3ID = (parseInt(currKingparentID) - 3).toString();
+  let rightSquareID = (parseInt(currKingparentID) + 1).toString();
+  let rightSquare2ID = (parseInt(currKingparentID) + 2).toString();
+  let row;
+  let col;
+  if (currColor == "white" && !castlingPieces["whiteKing"]) {
+    // queen side castling
+    // check if theres a grey circle next to current king
+    // check if the second square to the left is possible to move into
+    // check the third square if theres a childnode
+    if (!castlingPieces["whiteLeftRook"]) {
+      let checkSquare = document.getElementById(leftSquareID);
+      let checkSquare2 = document.getElementById(leftSquare2ID);
+      let checkSquare3 = document.getElementById(leftSquare3ID);
+      if (checkSquare.children[0].classList.contains("greyCircle") && !checkSquare3.hasChildNodes()) {
+        row = 7;
+        col = 2;
+        if (!incheck(currKing, [row, col])) {
+          globalGreyCheck(checkSquare2, currColor);
+          prevKingPos = currKingparentID;
+        }
+      }
+    }
+    // king side castling
+    if (!castlingPieces["whiteRightRook"]) {
+      let checkSquare = document.getElementById(rightSquareID);
+      let checkSquare2 = document.getElementById(rightSquare2ID);
+      if (checkSquare.children[0].classList.contains("greyCircle")) {
+        row = 7;
+        col = 6;
+        if (!incheck(currKing, [row, col])) {
+          globalGreyCheck(checkSquare2, currColor);
+          prevKingPos = currKingparentID;
+        }
+      }
+    } 
+  }
+  if (currColor == "black" && !castlingPieces["blackKing"]) {
+    if (!castlingPieces["blackLeftRook"]) {
+      let checkSquare = document.getElementById("0" + leftSquareID);
+      let checkSquare2 = document.getElementById("0" + leftSquare2ID);
+      let checkSquare3 = document.getElementById("0" + leftSquare3ID);
+      if (checkSquare.children[0].classList.contains("greyCircle") && !checkSquare3.hasChildNodes()) {
+        row = 0;
+        col = 2;
+        if (!incheck(currKing, [row, col])) {
+          globalGreyCheck(checkSquare2, currColor);
+          prevKingPos = currKingparentID;
+        }
+      }
+    }
+    if (!castlingPieces["blackRightRook"]) {
+      let checkSquare = document.getElementById("0" + rightSquareID);
+      let checkSquare2 = document.getElementById("0" + rightSquare2ID);
+      if (checkSquare.children[0].classList.contains("greyCircle")) {
+        row = 0;
+        col = 6;
+        if (!incheck(currKing, [row, col])) {
+          globalGreyCheck(checkSquare2, currColor);
+          prevKingPos = currKingparentID;
+        }
+      }
+    } 
+  }
+}
 
+function handleCastlingLogic(pieceType,pieceColor,currKingPos) {
+  // check if any of the pieces used for castling is moved
+  // check each piece individually
+  function checkIfMoved(piece,idofSquare) {
+    if (!castlingPieces[piece]) {
+      // the square the white king is suppose to be at
+      let checkSquare = document.getElementById(idofSquare);
+      // piece moved
+      if (!checkSquare.hasChildNodes()) castlingPieces[piece] = true;
+    }
+  }
+  if (pieceColor == "white") {
+    checkIfMoved("whiteKing","74");
+    checkIfMoved("whiteLeftRook","70");
+    checkIfMoved("whiteRightRook","77");
+  } else {
+    checkIfMoved("blackKing","04");
+    checkIfMoved("blackLeftRook","00");
+    checkIfMoved("blackRightRook","07");
+  }
+  //check if the king has castled
+  let rookSquare;
+  let checkSquare;
+  if (currKingPos - prevKingPos == 2) {
+    //king side castle
+    // move the rook
+    if (currTurn == "white") {
+      checkSquare = document.getElementById((parseInt(prevKingPos) + 1).toString());
+      rookSquare = document.getElementById((parseInt(prevKingPos) + 3).toString());
+    } else {
+      checkSquare = document.getElementById( "0" + (parseInt(prevKingPos) + 1).toString());
+      rookSquare = document.getElementById( "0" + (parseInt(prevKingPos) + 3).toString());
+    }
+    console.log(( "0" + parseInt(prevKingPos) + 3).toString());
+    let rook = rookSquare.firstChild;
+    rookSquare.removeChild(rook);
+    checkSquare.append(rook);
+  } else if (currKingPos - prevKingPos == -2) {
+    if (currTurn == "white") {
+      checkSquare = document.getElementById((parseInt(prevKingPos) - 1).toString());
+      rookSquare = document.getElementById((parseInt(prevKingPos) - 4).toString());
+    } else {
+      checkSquare = document.getElementById( "0" + (parseInt(prevKingPos) - 1).toString());
+      rookSquare = document.getElementById( "0" + (parseInt(prevKingPos) - 4).toString());
+    }
+    
+    let rook = rookSquare.firstChild;
+    rookSquare.removeChild(rook);
+    checkSquare.append(rook);
+  }
+}
 function createGreyCircle() {
   let div = document.createElement("div");
   div.className = "greyCircle";
@@ -342,6 +473,9 @@ function HandleTurnChange() {
     console.log("promote black");
     promotion(pieceColor, pieceID);
   }
+  if (pieceType == "rook" || pieceType == "king") {
+    handleCastlingLogic(pieceType,pieceColor,pieceID.id);
+  }
   changeTurn();
   // make it so that only the pieces of the same color as currTurn can be dragged
   const dragpieces = document.querySelectorAll(`.${currTurn}`);
@@ -355,11 +489,10 @@ function HandleTurnChange() {
   nondragpieces.forEach(function (element) {
     element.draggable = false;
   });
-  selectedPiece = null;
-  checkforcheck();
+  checkforcheck(prevTurn);
 }
 
-function checkforcheck() {
+function checkforcheck(prevTurn) {
   // check if the curr king is in check
   const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
   if (incheck(currKing[0])) {
@@ -532,7 +665,6 @@ function incheck(currKing, currPosition, blockCheck) {
       if (checkChild(["pawn"], checkSquare)) return true;
     }
   }
-
   return false;
 }
 function checkmate() {
@@ -662,12 +794,14 @@ function load() {
         let child = square.children[0];
         square.removeChild(child);
         square.appendChild(selectedPiece);
+        removeGreyCircle();
+        HandleTurnChange();
       }
       if (square.lastChild.className == "greyCircle") {
         square.appendChild(selectedPiece);
+        removeGreyCircle();
+        HandleTurnChange();
       }
-      removeGreyCircle();
-      HandleTurnChange();
     });
     square.addEventListener("click", (e) => {
       if (square.classList.contains("capturable")) {
@@ -679,14 +813,15 @@ function load() {
       }
       if (square.lastChild.className == "greyCircle") {
         square.appendChild(selectedPiece);
-        HandleTurnChange();
         removeGreyCircle();
+        HandleTurnChange();
       }
     });
   });
 }
 
 function changeTurn() {
+  selectedPiece = null;
   if (!promotionProgress) {
     if (currTurn == "white") currTurn = "black";
     else if (currTurn == "black") currTurn = "white";
