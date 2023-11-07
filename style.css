@@ -83,7 +83,21 @@
 }
 
 #gameover {
+  z-index: 3px;
   position: absolute;
   height: 180px;
-  width: 320px;
+  width: 350px;
+  background: blue;
+  text-align: center;
+  font-size: 30px;
+  border-radius: 20px;
+  padding-top: 10px;
+  display: grid;
+  justify-content: center;
+}
+
+#refreshButton {
+  background: black;
+  height: 50px;
+  width: 200px;
 }

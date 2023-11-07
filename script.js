@@ -1,8 +1,6 @@
-// what else is missing
-// Game over screen
+// what else is missig
 // en passant
 // pawn promotion
-// discovered check
 // castling
 
 const pieces = [
@@ -344,6 +342,7 @@ function HandleTurnChange() {
     console.log("promote black");
     promotion(pieceColor, pieceID);
   }
+
   // make it so that only the pieces of the same color as currTurn can be dragged
   const dragpieces = document.querySelectorAll(`.${currTurn}`);
   dragpieces.forEach(function (element) {
@@ -356,6 +355,7 @@ function HandleTurnChange() {
   nondragpieces.forEach(function (element) {
     element.draggable = false;
   });
+  selectedPiece = null;
 
   // check if the curr king is in check
   const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
@@ -364,7 +364,7 @@ function HandleTurnChange() {
     if (checkmate()) {
       // Game ended
       console.log("checkmateeeeaeeeeeeeeeeeeeeeeeee");
-      load();
+      handleEndGame(prevTurn);
     }
   } else {
     let toRemove = document.querySelectorAll(".incheck");
@@ -544,6 +544,28 @@ function checkmate() {
   return check;
 }
 
+function handleEndGame(prevTurn) {
+  let board = document.getElementById("board");
+  let div = document.createElement("div");
+  div.id = "gameover";
+  div.textContent = `${prevTurn} Won!!!!`;
+  let divButton = document.createElement("button");
+  divButton.id = "refreshButton";
+  div.onclick = function () {
+    refresh();
+  };
+  div.appendChild(divButton);
+  board.appendChild(div);
+}
+
+function refresh() {
+  const board = document.getElementById("board");
+  while (board.hasChildNodes()) {
+    board.removeChild(board.firstChild);
+  }
+  load();
+}
+
 function promotion(color, ID) {
   let board = document.getElementById("board");
   let div = document.createElement("div");
@@ -570,6 +592,7 @@ function promote(square, piece) {
 }
 
 function load() {
+  currTurn = "white";
   let alt = -1;
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
@@ -633,7 +656,6 @@ function load() {
       }
       removeGreyCircle();
       HandleTurnChange();
-      selectedPiece = null;
     });
     square.addEventListener("click", (e) => {
       if (square.classList.contains("capturable")) {
@@ -644,7 +666,6 @@ function load() {
         if (currTurn == "white") currTurn = "black";
         else if (currTurn == "black") currTurn = "white";
         HandleTurnChange();
-        selectedPiece = null;
       }
       if (square.lastChild.className == "greyCircle") {
         square.appendChild(selectedPiece);
@@ -652,7 +673,6 @@ function load() {
         else if (currTurn == "black") currTurn = "white";
         removeGreyCircle();
         HandleTurnChange();
-        selectedPiece = null;
       }
     });
   });
