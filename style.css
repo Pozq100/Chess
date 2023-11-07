@@ -11,22 +11,24 @@
 }
 
 #board {
-  height: 720px;
-  width: 720px;
+  height: 640px;
+  width: 640px;
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
 }
 
 #side {
-  height: 720px;
+  height: 640px;
   width: 300px;
 }
 
 .blacksquare,
 .whitesquare {
   display: flex;
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
 }
 
 .piece {
@@ -62,4 +64,17 @@
 
 .incheck {
   background-color: red;
+}
+
+#promotion {
+  position: absolute;
+  height: 160px;
+  width: 160px;
+  background: red;
+}
+
+#gameover {
+  position: absolute;
+  height: 180px;
+  width: 320px;
 }
