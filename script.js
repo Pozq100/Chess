@@ -16,19 +16,16 @@ const pieces = [
   "rook",
 ];
 let selectedPiece;
-let KinginCheck = false;
 var currTurn = "white";
 let greyCircle = createGreyCircle();
 
 function globalGreyCheck(checkSquare, currColor, check) {
-  if (KinginCheck) {
-    const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
-    const parentID = checkSquare.id;
-    const currRow = parseInt(parentID[0]);
-    const currCol = parseInt(parentID[1]);
-    if (incheck(currKing[0], null, [currRow, currCol])) {
-      return;
-    }
+  const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
+  const parentID = checkSquare.id;
+  const currRow = parseInt(parentID[0]);
+  const currCol = parseInt(parentID[1]);
+  if (incheck(currKing[0], null, [currRow, currCol])) {
+    return;
   }
   if (check) return true;
   greyCircle = createGreyCircle();
@@ -38,14 +35,12 @@ function globalGreyCheck(checkSquare, currColor, check) {
 function capturable(currPieceColor, parentofOther, check) {
   const otherPiece = parentofOther.children[0];
   const otherPieceColor = Array.from(otherPiece.classList)[1];
-  if (KinginCheck) {
-    const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
-    const parentID = parentofOther.id;
-    const currRow = parseInt(parentID[0]);
-    const currCol = parseInt(parentID[1]);
-    if (incheck(currKing[0], null, [currRow, currCol])) {
-      return;
-    }
+  const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
+  const parentID = parentofOther.id;
+  const currRow = parseInt(parentID[0]);
+  const currCol = parseInt(parentID[1]);
+  if (incheck(currKing[0], null, [currRow, currCol])) {
+    return;
   }
   if (check) return true;
   if (otherPieceColor != currPieceColor) {
@@ -88,13 +83,9 @@ const rules = {
         if (globalGreyCheck(checkSquare, currColor, check)) return true;
       }
     }
-    // up
     create(currRow, true, -1);
-    // down
     create(currRow, true, 1);
-    // right
     create(currCol, false, 1);
-    //left
     create(currCol, false, -1);
   },
 
@@ -211,7 +202,6 @@ const rules = {
       createDiag(currRow, currCol, -1, 1)
     )
       return true;
-
     function createLine(index, UpDown, iterate) {
       let toStay = "col";
       if (UpDown) toStay = "row";
@@ -285,7 +275,7 @@ const rules = {
       return;
     }
     removeGreyCircle();
-
+    selectedPiece = element;
     // at the start its able to move 2 squares or 1 squares
     if (currColor == "white") {
       let checkSquare = document.getElementById(`${currRow - 1}${currCol}`);
@@ -318,7 +308,6 @@ const rules = {
       if (checkSquare && checkSquare.hasChildNodes())
         if (capturable(currColor, checkSquare, check)) return true;
     }
-    selectedPiece = element;
   },
 };
 
@@ -366,7 +355,6 @@ function HandleTurnChange() {
   const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
   if (incheck(currKing[0])) {
     currKing[0].parentNode.classList.add("incheck");
-    KinginCheck = true;
     if (checkmate()) {
       // Game ended
       console.log("checkmateeeeaeeeeeeeeeeeeeeeeeee");
@@ -377,7 +365,6 @@ function HandleTurnChange() {
     toRemove.forEach(function (element) {
       element.classList.remove("incheck");
     });
-    KinginCheck = false;
   }
 }
 
@@ -419,7 +406,8 @@ function incheck(currKing, currPosition, blockCheck) {
       }
       if (
         checkSquare.hasChildNodes() &&
-        !checkSquare.children[0].classList.contains("greyCircle")
+        !checkSquare.children[0].classList.contains("greyCircle") &&
+        selectedPiece != checkSquare.children[0]
       ) {
         if (checkChild(["rook", "queen"], checkSquare)) return true;
         break;
@@ -443,7 +431,8 @@ function incheck(currKing, currPosition, blockCheck) {
       if (blockCheck && blockCheckRow == row && blockCheckCol == col) break;
       if (
         checkSquare.hasChildNodes() &&
-        !checkSquare.children[0].classList.contains("greyCircle")
+        !checkSquare.children[0].classList.contains("greyCircle") &&
+        selectedPiece != checkSquare.children[0]
       ) {
         //check the color
         if (checkChild(["bishop", "queen"], checkSquare)) return true;
@@ -459,7 +448,6 @@ function incheck(currKing, currPosition, blockCheck) {
     checkDiag(currRow, currCol, -1, 1)
   )
     return true;
-
   //check knights
   function checkKnight(row, iterateCol) {
     if (row < 0 || row > 7) return false;
@@ -470,17 +458,19 @@ function incheck(currKing, currPosition, blockCheck) {
     if (
       checkSquare &&
       checkSquare.hasChildNodes() &&
-      !checkSquare.children[0].classList.contains("greyCircle")
+      !checkSquare.children[0].classList.contains("greyCircle") &&
+      selectedPiece != checkSquare.children[0]
     ) {
-      if (checkChild(["knight"], checkSquare)) return true;
+        if (checkChild(["knight"], checkSquare)) return true;
     }
     checkSquare = document.getElementById(`${row}${j2}`);
     if (
       checkSquare &&
       checkSquare.hasChildNodes() &&
-      !checkSquare.children[0].classList.contains("greyCircle")
+      !checkSquare.children[0].classList.contains("greyCircle") &&
+      selectedPiece != checkSquare.children[0]
     ) {
-      if (checkChild(["knight"], checkSquare)) return true;
+        if (checkChild(["knight"], checkSquare)) return true;
     }
   }
 
@@ -499,24 +489,27 @@ function incheck(currKing, currPosition, blockCheck) {
     if (
       checkSquare &&
       checkSquare.hasChildNodes() &&
-      !checkSquare.children[0].classList.contains("greyCircle")
+      !checkSquare.children[0].classList.contains("greyCircle") &&
+      selectedPiece != checkSquare.children[0]
     ) {
-      if (checkChild(["pawn"], checkSquare)) return true;
+        if (checkChild(["pawn"], checkSquare)) return true;
     }
     checkSquare = document.getElementById(`${currRow + 1}${currCol + 1}`);
     if (
       checkSquare &&
       checkSquare.hasChildNodes() &&
-      !checkSquare.children[0].classList.contains("greyCircle")
+      !checkSquare.children[0].classList.contains("greyCircle") &&
+      selectedPiece != checkSquare.children[0]
     ) {
-      if (checkChild(["pawn"], checkSquare)) return true;
+        if (checkChild(["pawn"], checkSquare)) return true;
     }
   } else {
     checkSquare = document.getElementById(`${currRow - 1}${currCol - 1}`);
     if (
       checkSquare &&
       checkSquare.hasChildNodes() &&
-      !checkSquare.children[0].classList.contains("greyCircle")
+      !checkSquare.children[0].classList.contains("greyCircle") &&
+      selectedPiece != checkSquare.children[0]
     ) {
       if (checkChild(["pawn"], checkSquare)) return true;
     }
@@ -524,7 +517,8 @@ function incheck(currKing, currPosition, blockCheck) {
     if (
       checkSquare &&
       checkSquare.hasChildNodes() &&
-      !checkSquare.children[0].classList.contains("greyCircle")
+      !checkSquare.children[0].classList.contains("greyCircle") &&
+      selectedPiece != checkSquare.children[0]
     ) {
       if (checkChild(["pawn"], checkSquare)) return true;
     }
