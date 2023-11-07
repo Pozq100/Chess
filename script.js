@@ -467,7 +467,7 @@ function incheck(currKing, currPosition, blockCheck) {
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
     ) {
-      if (checkChild(["knight"], checkSquare)) return true;
+        if (checkChild(["knight"], checkSquare)) return true;
     }
     checkSquare = document.getElementById(`${row}${j2}`);
     if (
@@ -476,7 +476,7 @@ function incheck(currKing, currPosition, blockCheck) {
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
     ) {
-      if (checkChild(["knight"], checkSquare)) return true;
+        if (checkChild(["knight"], checkSquare)) return true;
     }
   }
 
@@ -498,7 +498,7 @@ function incheck(currKing, currPosition, blockCheck) {
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
     ) {
-      if (checkChild(["pawn"], checkSquare)) return true;
+        if (checkChild(["pawn"], checkSquare)) return true;
     }
     checkSquare = document.getElementById(`${currRow + 1}${currCol + 1}`);
     if (
@@ -507,7 +507,7 @@ function incheck(currKing, currPosition, blockCheck) {
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
     ) {
-      if (checkChild(["pawn"], checkSquare)) return true;
+        if (checkChild(["pawn"], checkSquare)) return true;
     }
   } else {
     checkSquare = document.getElementById(`${currRow - 1}${currCol - 1}`);
@@ -597,6 +597,10 @@ function promote(square, piece, color) {
   square.removeChild(square.lastChild);
   square.appendChild(newPiece);
   document.getElementById("promotion").remove();
+  const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
+  if (incheck(currKing[0])) {
+    currKing[0].parentNode.classList.add("incheck");
+  }
 }
 
 function load() {
