@@ -342,7 +342,7 @@ function HandleTurnChange() {
     console.log("promote black");
     promotion(pieceColor, pieceID);
   }
-
+  changeTurn();
   // make it so that only the pieces of the same color as currTurn can be dragged
   const dragpieces = document.querySelectorAll(`.${currTurn}`);
   dragpieces.forEach(function (element) {
@@ -356,7 +356,10 @@ function HandleTurnChange() {
     element.draggable = false;
   });
   selectedPiece = null;
+  checkforcheck();
+}
 
+function checkforcheck() {
   // check if the curr king is in check
   const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
   if (incheck(currKing[0])) {
@@ -599,12 +602,9 @@ function promote(square, piece, color) {
   square.removeChild(square.lastChild);
   square.appendChild(newPiece);
   document.getElementById("promotion").remove();
-  const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
-  if (incheck(currKing[0])) {
-    currKing[0].parentNode.classList.add("incheck");
-  }
   if (currTurn == "white") currTurn = "black";
   else if (currTurn == "black") currTurn = "white";
+  checkforcheck();
 }
 
 function load() {
@@ -662,11 +662,9 @@ function load() {
         let child = square.children[0];
         square.removeChild(child);
         square.appendChild(selectedPiece);
-        changeTurn();
       }
       if (square.lastChild.className == "greyCircle") {
         square.appendChild(selectedPiece);
-        changeTurn();
       }
       removeGreyCircle();
       HandleTurnChange();
@@ -677,14 +675,12 @@ function load() {
         square.removeChild(child);
         square.appendChild(selectedPiece);
         removeGreyCircle();
-        changeTurn();
         HandleTurnChange();
       }
       if (square.lastChild.className == "greyCircle") {
         square.appendChild(selectedPiece);
-        changeTurn();
-        removeGreyCircle();
         HandleTurnChange();
+        removeGreyCircle();
       }
     });
   });
@@ -694,8 +690,7 @@ function changeTurn() {
   if (!promotionProgress) {
     if (currTurn == "white") currTurn = "black";
     else if (currTurn == "black") currTurn = "white";
-  } else if (promotionProgress) {
-    return;
+    checkforcheck();
   }
 }
 
