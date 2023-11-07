@@ -34,8 +34,8 @@
 .piece {
   position: relative;
   margin: auto;
-  width: 90px;
-  height: 90px;
+  width: 80px;
+  height: 80px;
   background-repeat: no-repeat;
   background-size: contain;
   z-index: 1px;
@@ -71,11 +71,25 @@
   height: 160px;
   width: 160px;
   background: red;
+  z-index: 3px;
 }
 
 #gameover {
+  z-index: 3px;
   position: absolute;
   height: 180px;
   width: 350px;
   background: blue;
+  text-align: center;
+  font-size: 30px;
+  border-radius: 20px;
+  padding-top: 10px;
+  display: grid;
+  justify-content: center;
+}
+
+#refreshButton {
+  background: black;
+  height: 50px;
+  width: 200px;
 }

@@ -1,8 +1,6 @@
-// what else is missing
-// Game over screen
+// what else is missig
 // en passant
 // pawn promotion
-// discovered check
 // castling
 
 const pieces = [
@@ -338,6 +336,8 @@ function HandleTurnChange() {
   } else if (pieceType == "pawn" && pieceColor == "black" && pieceRow == 7) {
     console.log("promote");
   }
+
+
   // make it so that only the pieces of the same color as currTurn can be dragged
   const dragpieces = document.querySelectorAll(`.${currTurn}`);
   dragpieces.forEach(function (element) {
@@ -359,7 +359,7 @@ function HandleTurnChange() {
     if (checkmate()) {
       // Game ended
       console.log("checkmateeeeaeeeeeeeeeeeeeeeeeee");
-      refresh();
+      handleEndGame(prevTurn);
     }
   } else {
     let toRemove = document.querySelectorAll(".incheck");
@@ -539,15 +539,28 @@ function checkmate() {
   return check;
 }
 
+function handleEndGame(prevTurn) {
+  let board = document.getElementById("board");
+  let div = document.createElement("div");
+  div.id = "gameover";
+  div.textContent = `${prevTurn} Won!!!!`;
+  let divButton = document.createElement("button");
+  divButton.id = "refreshButton";
+  div.onclick = function() {refresh()};
+  div.appendChild(divButton);
+  board.appendChild(div);
+}
 
 function refresh() {
-  let board = document.getElementById("board");
-  board.forEach((child) =>{
-    board.removeChild(child);
-  });
+  const board = document.getElementById("board");
+  while(board.hasChildNodes()) {
+    board.removeChild(board.firstChild);
+  }
   load();
 }
+
 function load() {
+  currTurn = "white";
   let alt = -1;
   for (let i = 0; i < 8; i++) {
     for (let j = 0; j < 8; j++) {
