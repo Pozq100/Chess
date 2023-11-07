@@ -580,15 +580,23 @@ function promotion(color, ID) {
     createDiv.classList.add(currPiece);
     createDiv.style = `background-image: url(./images/${color}_${currPiece}.png)`;
     createDiv.onclick = function () {
-      promote(ID, currPiece);
+      promote(ID, currPiece, color);
     };
     div.appendChild(createDiv);
   }
 }
 
-function promote(square, piece) {
+function promote(square, piece, color) {
+  const newPiece = document.createElement("div");
+  newPiece.className = "piece";
+  newPiece.classList.add(color);
+  newPiece.classList.add(piece);
+  newPiece.style = `background-image: url(./images/${color}_${piece}.png)`;
+  newPiece.addEventListener("click", rules[`${piece}_rule`]);
+  newPiece.addEventListener("dragstart", rules[`${piece}_rule`]);
   square.removeChild(square.lastChild);
-  square.appendChild(piece);
+  square.appendChild(newPiece);
+  document.getElementById("promotion").remove();
 }
 
 function load() {
