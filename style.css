@@ -76,5 +76,6 @@
 #gameover {
   position: absolute;
   height: 180px;
-  width: 320px;
+  width: 350px;
+  background: blue;
 }

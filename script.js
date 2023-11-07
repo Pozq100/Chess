@@ -350,6 +350,7 @@ function HandleTurnChange() {
   nondragpieces.forEach(function (element) {
     element.draggable = false;
   });
+  selectedPiece = null;
 
   // check if the curr king is in check
   const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
@@ -358,7 +359,7 @@ function HandleTurnChange() {
     if (checkmate()) {
       // Game ended
       console.log("checkmateeeeaeeeeeeeeeeeeeeeeeee");
-      load();
+      refresh();
     }
   } else {
     let toRemove = document.querySelectorAll(".incheck");
@@ -538,6 +539,14 @@ function checkmate() {
   return check;
 }
 
+
+function refresh() {
+  let board = document.getElementById("board");
+  board.forEach((child) =>{
+    board.removeChild(child);
+  });
+  load();
+}
 function load() {
   let alt = -1;
   for (let i = 0; i < 8; i++) {
@@ -602,7 +611,6 @@ function load() {
       }
       removeGreyCircle();
       HandleTurnChange();
-      selectedPiece = null;
     });
     square.addEventListener("click", (e) => {
       if (square.classList.contains("capturable")) {
@@ -613,7 +621,6 @@ function load() {
         if (currTurn == "white") currTurn = "black";
         else if (currTurn == "black") currTurn = "white";
         HandleTurnChange();
-        selectedPiece = null;
       }
       if (square.lastChild.className == "greyCircle") {
         square.appendChild(selectedPiece);
@@ -621,7 +628,6 @@ function load() {
         else if (currTurn == "black") currTurn = "white";
         removeGreyCircle();
         HandleTurnChange();
-        selectedPiece = null;
       }
     });
   });
