@@ -1,6 +1,5 @@
 // what else is missig
 // en passant
-// pawn promotion
 // castling
 
 const pieces = [
@@ -16,6 +15,7 @@ const pieces = [
 
 const promotePiece = ["rook", "knight", "bishop", "queen"];
 
+var promotionProgress = false;
 let selectedPiece;
 var currTurn = "white";
 let greyCircle = createGreyCircle();
@@ -467,7 +467,7 @@ function incheck(currKing, currPosition, blockCheck) {
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
     ) {
-        if (checkChild(["knight"], checkSquare)) return true;
+      if (checkChild(["knight"], checkSquare)) return true;
     }
     checkSquare = document.getElementById(`${row}${j2}`);
     if (
@@ -476,7 +476,7 @@ function incheck(currKing, currPosition, blockCheck) {
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
     ) {
-        if (checkChild(["knight"], checkSquare)) return true;
+      if (checkChild(["knight"], checkSquare)) return true;
     }
   }
 
@@ -498,7 +498,7 @@ function incheck(currKing, currPosition, blockCheck) {
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
     ) {
-        if (checkChild(["pawn"], checkSquare)) return true;
+      if (checkChild(["pawn"], checkSquare)) return true;
     }
     checkSquare = document.getElementById(`${currRow + 1}${currCol + 1}`);
     if (
@@ -507,7 +507,7 @@ function incheck(currKing, currPosition, blockCheck) {
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
     ) {
-        if (checkChild(["pawn"], checkSquare)) return true;
+      if (checkChild(["pawn"], checkSquare)) return true;
     }
   } else {
     checkSquare = document.getElementById(`${currRow - 1}${currCol - 1}`);
@@ -567,6 +567,7 @@ function refresh() {
 }
 
 function promotion(color, ID) {
+  promotionProgress = true;
   let board = document.getElementById("board");
   let div = document.createElement("div");
   div.id = "promotion";
@@ -587,6 +588,7 @@ function promotion(color, ID) {
 }
 
 function promote(square, piece, color) {
+  promotionProgress = false;
   const newPiece = document.createElement("div");
   newPiece.className = "piece";
   newPiece.classList.add(color);
@@ -601,6 +603,8 @@ function promote(square, piece, color) {
   if (incheck(currKing[0])) {
     currKing[0].parentNode.classList.add("incheck");
   }
+  if (currTurn == "white") currTurn = "black";
+  else if (currTurn == "black") currTurn = "white";
 }
 
 function load() {
@@ -658,13 +662,11 @@ function load() {
         let child = square.children[0];
         square.removeChild(child);
         square.appendChild(selectedPiece);
-        if (currTurn == "white") currTurn = "black";
-        else if (currTurn == "black") currTurn = "white";
+        changeTurn();
       }
       if (square.lastChild.className == "greyCircle") {
         square.appendChild(selectedPiece);
-        if (currTurn == "white") currTurn = "black";
-        else if (currTurn == "black") currTurn = "white";
+        changeTurn();
       }
       removeGreyCircle();
       HandleTurnChange();
@@ -675,19 +677,26 @@ function load() {
         square.removeChild(child);
         square.appendChild(selectedPiece);
         removeGreyCircle();
-        if (currTurn == "white") currTurn = "black";
-        else if (currTurn == "black") currTurn = "white";
+        changeTurn();
         HandleTurnChange();
       }
       if (square.lastChild.className == "greyCircle") {
         square.appendChild(selectedPiece);
-        if (currTurn == "white") currTurn = "black";
-        else if (currTurn == "black") currTurn = "white";
+        changeTurn();
         removeGreyCircle();
         HandleTurnChange();
       }
     });
   });
+}
+
+function changeTurn() {
+  if (!promotionProgress) {
+    if (currTurn == "white") currTurn = "black";
+    else if (currTurn == "black") currTurn = "white";
+  } else if (promotionProgress) {
+    return;
+  }
 }
 
 function checkTurn() {
