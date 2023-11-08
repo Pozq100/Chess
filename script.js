@@ -651,7 +651,8 @@ function incheck(currKing, currPosition, blockCheck) {
     if (
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
-      selectedPiece != checkSquare.children[0]
+      selectedPiece != checkSquare.children[0] &&
+      !(blockCheckRow == row && blockCheckCol == j1)
     ) {
       if (checkChild(["knight"], checkSquare)) return true;
     }
@@ -659,7 +660,8 @@ function incheck(currKing, currPosition, blockCheck) {
     if (
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
-      selectedPiece != checkSquare.children[0]
+      selectedPiece != checkSquare.children[0] &&
+      !(blockCheckRow == row && blockCheckCol == j2)
     ) {
       if (checkChild(["knight"], checkSquare)) return true;
     }
@@ -680,7 +682,8 @@ function incheck(currKing, currPosition, blockCheck) {
     if (
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
-      selectedPiece != checkSquare.children[0]
+      selectedPiece != checkSquare.children[0] &&
+      !(blockCheckRow == currRow+1 && blockCheckCol == currCol-1)
     ) {
       if (checkChild(["pawn"], checkSquare)) return true;
     }
@@ -688,7 +691,8 @@ function incheck(currKing, currPosition, blockCheck) {
     if (
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
-      selectedPiece != checkSquare.children[0]
+      selectedPiece != checkSquare.children[0] &&
+      !(blockCheckRow == currRow+1 && blockCheckCol == currCol+1)
     ) {
       if (checkChild(["pawn"], checkSquare)) return true;
     }
@@ -697,7 +701,8 @@ function incheck(currKing, currPosition, blockCheck) {
     if (
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
-      selectedPiece != checkSquare.children[0]
+      selectedPiece != checkSquare.children[0] &&
+      !(blockCheckRow == currRow-1 && blockCheckCol == currCol-1)
     ) {
       if (checkChild(["pawn"], checkSquare)) return true;
     }
@@ -705,7 +710,8 @@ function incheck(currKing, currPosition, blockCheck) {
     if (
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
-      selectedPiece != checkSquare.children[0]
+      selectedPiece != checkSquare.children[0] &&
+      !(blockCheckRow == currRow-1 && blockCheckCol == currCol+1)
     ) {
       if (checkChild(["pawn"], checkSquare)) return true;
     }
