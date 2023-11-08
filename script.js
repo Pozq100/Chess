@@ -649,6 +649,7 @@ function incheck(currKing, currPosition, blockCheck) {
     let checkSquare;
     checkSquare = document.getElementById(`${row}${j1}`);
     if (
+      checkSquare &&
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0] &&
@@ -658,6 +659,7 @@ function incheck(currKing, currPosition, blockCheck) {
     }
     checkSquare = document.getElementById(`${row}${j2}`);
     if (
+      checkSquare &&
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0] &&
@@ -680,6 +682,7 @@ function incheck(currKing, currPosition, blockCheck) {
   if (currColor == "black") {
     checkSquare = document.getElementById(`${currRow + 1}${currCol - 1}`);
     if (
+      checkSquare &&
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0] &&
@@ -689,6 +692,7 @@ function incheck(currKing, currPosition, blockCheck) {
     }
     checkSquare = document.getElementById(`${currRow + 1}${currCol + 1}`);
     if (
+      checkSquare &&
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0] &&
@@ -699,6 +703,7 @@ function incheck(currKing, currPosition, blockCheck) {
   } else {
     checkSquare = document.getElementById(`${currRow - 1}${currCol - 1}`);
     if (
+      checkSquare &&
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0] &&
@@ -708,6 +713,7 @@ function incheck(currKing, currPosition, blockCheck) {
     }
     checkSquare = document.getElementById(`${currRow - 1}${currCol + 1}`);
     if (
+      checkSquare &&
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0] &&
