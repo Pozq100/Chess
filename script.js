@@ -1,6 +1,5 @@
 // what else is missig
 // en passant
-// castling
 
 const pieces = [
   "rook",
@@ -29,6 +28,7 @@ let selectedPiece;
 var currTurn = "white";
 let greyCircle = createGreyCircle();
 let prevKingPos;
+let enPassant = false;
 
 function globalGreyCheck(checkSquare, currColor, check) {
   const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
@@ -288,6 +288,10 @@ const rules = {
     }
     removeGreyCircle();
     selectedPiece = element;
+
+    checkLeftSquare = document.getElementById(`${currRow}${currCol - 1}`);
+    checkRightSquare = document.getElementById(`${currRow}${currCol + 1}`);
+    
     // at the start its able to move 2 squares or 1 squares
     if (currColor == "white") {
       let checkSquare = document.getElementById(`${currRow - 1}${currCol}`);
@@ -304,6 +308,26 @@ const rules = {
       checkSquare = document.getElementById(`${currRow - 1}${currCol + 1}`);
       if (checkSquare && checkSquare.hasChildNodes())
         if (capturable(currColor, checkSquare, check)) return true;
+      // check for enPassant
+      if (checkLeftSquare &&
+          checkLeftSquare.hasChildNodes() &&
+          checkLeftSquare.children[0].hasAttribute('data-en-passant') && 
+          checkLeftSquare.children[0].dataset.enPassant === "true") {
+        //it just moved 2 squares
+        checkSquare = document.getElementById(`${currRow - 1}${currCol - 1}`);
+        greyCircle = createGreyCircle();
+        greyCircle.dataset.toBeRemoved = `${currRow}${currCol - 1}`;
+        checkSquare.appendChild(greyCircle);
+      } else if (checkRightSquare &&
+        checkRightSquare.hasChildNodes() &&
+        checkRightSquare.children[0].hasAttribute('data-en-passant') && 
+        checkRightSquare.children[0].dataset.enPassant === "true") {
+        //it just moved 2 squares
+        checkSquare = document.getElementById(`${currRow - 1}${currCol + 1}`);
+        greyCircle = createGreyCircle();
+        greyCircle.dataset.toBeRemoved = `${currRow}${currCol + 1}`;
+        checkSquare.appendChild(greyCircle);
+      }
     } else {
       let checkSquare = document.getElementById(`${currRow + 1}${currCol}`);
       if (!checkSquare.hasChildNodes()) {
@@ -319,9 +343,36 @@ const rules = {
       checkSquare = document.getElementById(`${currRow + 1}${currCol + 1}`);
       if (checkSquare && checkSquare.hasChildNodes())
         if (capturable(currColor, checkSquare, check)) return true;
+      if (checkLeftSquare &&
+          checkLeftSquare.hasChildNodes() &&
+          checkLeftSquare.children[0].hasAttribute('data-en-passant') && 
+          checkLeftSquare.children[0].dataset.enPassant === "true") {
+        //it just moved 2 squares
+        checkSquare = document.getElementById(`${currRow + 1}${currCol - 1}`);
+        greyCircle = createGreyCircle();
+        greyCircle.dataset.toBeRemoved = `${currRow}${currCol - 1}`;
+        checkSquare.appendChild(greyCircle);
+      } else if (checkRightSquare &&
+        checkRightSquare.hasChildNodes() &&
+        checkRightSquare.children[0].hasAttribute('data-en-passant') && 
+        checkRightSquare.children[0].dataset.enPassant === "true") {
+        //it just moved 2 squares
+        checkSquare = document.getElementById(`${currRow + 1}${currCol + 1}`);
+        greyCircle = createGreyCircle();
+        greyCircle.dataset.toBeRemoved = `${currRow}${currCol + 1}`;
+        checkSquare.appendChild(greyCircle);
+      }
     }
+
   },
 };
+
+function handleEnPassant() {
+  let pawns = document.querySelectorAll(".pawn");
+  pawns.forEach((pawn) =>{
+    pawn.dataset.enPassant = false;
+  });
+}
 function handleCastling(currKing, currColor) {
   let currKingparentID = currKing.parentNode.id;
   let leftSquareID = (parseInt(currKingparentID) - 1).toString();
@@ -425,7 +476,6 @@ function handleCastlingLogic(pieceType,pieceColor,currKingPos) {
       checkSquare = document.getElementById( "0" + (parseInt(prevKingPos) + 1).toString());
       rookSquare = document.getElementById( "0" + (parseInt(prevKingPos) + 3).toString());
     }
-    console.log(( "0" + parseInt(prevKingPos) + 3).toString());
     let rook = rookSquare.firstChild;
     rookSquare.removeChild(rook);
     checkSquare.append(rook);
@@ -465,17 +515,18 @@ function HandleTurnChange() {
   let pieceType = Array.from(selectedPiece.classList)[2];
   let pieceColor = Array.from(selectedPiece.classList)[1];
   let pieceRow = parseInt(selectedPiece.parentNode.id[0]);
-  let pieceID = selectedPiece.parentNode;
+  let pieceParent = selectedPiece.parentNode;
   if (pieceType == "pawn" && pieceColor == "white" && pieceRow == 0) {
     console.log("promote white");
-    promotion(pieceColor, pieceID);
+    promotion(pieceColor, pieceParent);
   } else if (pieceType == "pawn" && pieceColor == "black" && pieceRow == 7) {
     console.log("promote black");
-    promotion(pieceColor, pieceID);
+    promotion(pieceColor, pieceParent);
   }
-  if (pieceType == "rook" || pieceType == "king") {
-    handleCastlingLogic(pieceType,pieceColor,pieceID.id);
-  }
+  if (pieceType == "rook" || pieceType == "king") handleCastlingLogic(pieceType,pieceColor,pieceParent.id);
+  handleEnPassant();
+  if (pieceType == "pawn" && Math.abs(selectedPiece.dataset.initialRow - pieceRow) == 2) 
+  selectedPiece.dataset.enPassant = true;
   changeTurn();
   // make it so that only the pieces of the same color as currTurn can be dragged
   const dragpieces = document.querySelectorAll(`.${currTurn}`);
@@ -598,7 +649,6 @@ function incheck(currKing, currPosition, blockCheck) {
     let checkSquare;
     checkSquare = document.getElementById(`${row}${j1}`);
     if (
-      checkSquare &&
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
@@ -607,7 +657,6 @@ function incheck(currKing, currPosition, blockCheck) {
     }
     checkSquare = document.getElementById(`${row}${j2}`);
     if (
-      checkSquare &&
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
@@ -629,7 +678,6 @@ function incheck(currKing, currPosition, blockCheck) {
   if (currColor == "black") {
     checkSquare = document.getElementById(`${currRow + 1}${currCol - 1}`);
     if (
-      checkSquare &&
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
@@ -638,7 +686,6 @@ function incheck(currKing, currPosition, blockCheck) {
     }
     checkSquare = document.getElementById(`${currRow + 1}${currCol + 1}`);
     if (
-      checkSquare &&
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
@@ -648,7 +695,6 @@ function incheck(currKing, currPosition, blockCheck) {
   } else {
     checkSquare = document.getElementById(`${currRow - 1}${currCol - 1}`);
     if (
-      checkSquare &&
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
@@ -657,7 +703,6 @@ function incheck(currKing, currPosition, blockCheck) {
     }
     checkSquare = document.getElementById(`${currRow - 1}${currCol + 1}`);
     if (
-      checkSquare &&
       checkSquare.hasChildNodes() &&
       !checkSquare.children[0].classList.contains("greyCircle") &&
       selectedPiece != checkSquare.children[0]
@@ -767,6 +812,10 @@ function load() {
         }
         if (i == 1 || i == 6) {
           currPiece = "pawn";
+          if (currColor == "white") createPiece.dataset.initialRow = 6;
+          else createPiece.dataset.initialRow = 1;
+
+          createPiece.dataset.enPassant = false;
         } else {
           currPiece = pieces[j];
         }
@@ -799,6 +848,10 @@ function load() {
       }
       if (square.lastChild.className == "greyCircle") {
         square.appendChild(selectedPiece);
+        if (document.getElementById(square.children[0].dataset.toBeRemoved)) {
+          let removeSquare = document.getElementById(square.children[0].dataset.toBeRemoved);
+          removeSquare.removeChild(removeSquare.firstChild);
+        }
         removeGreyCircle();
         HandleTurnChange();
       }
@@ -813,6 +866,10 @@ function load() {
       }
       if (square.lastChild.className == "greyCircle") {
         square.appendChild(selectedPiece);
+        if (document.getElementById(square.children[0].dataset.toBeRemoved)) {
+          let removeSquare = document.getElementById(square.children[0].dataset.toBeRemoved);
+          removeSquare.removeChild(removeSquare.firstChild);
+        }
         removeGreyCircle();
         HandleTurnChange();
       }
