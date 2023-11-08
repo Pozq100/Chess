@@ -28,7 +28,6 @@ let selectedPiece;
 var currTurn = "white";
 let greyCircle = createGreyCircle();
 let prevKingPos;
-let enPassant = false;
 
 function globalGreyCheck(checkSquare, currColor, check) {
   const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
@@ -86,7 +85,7 @@ const rules = {
         else checkSquare = document.getElementById(`${currRow}${index}`);
         if (index < 0 || index > 7) break;
         // make capturable piece
-        if (checkSquare.hasChildNodes()) {
+        if (checkSquare && checkSquare.hasChildNodes()) {
           if (capturable(currColor, checkSquare, check)) return true;
           break;
         }
@@ -250,7 +249,6 @@ const rules = {
     }
     removeGreyCircle();
     selectedPiece = element;
-
     let topleftRow = currRow - 1;
     let topleftCol = currCol - 1;
     for (let i = 0; i < 3; i++) {
@@ -295,7 +293,7 @@ const rules = {
     // at the start its able to move 2 squares or 1 squares
     if (currColor == "white") {
       let checkSquare = document.getElementById(`${currRow - 1}${currCol}`);
-      if (!checkSquare.hasChildNodes()) {
+      if (checkSquare && !checkSquare.hasChildNodes()) {
         if (globalGreyCheck(checkSquare, currColor, check)) return true;
         checkSquare = document.getElementById(`${currRow - 2}${currCol}`);
         if (currRow == 6 && !checkSquare.hasChildNodes()) {
@@ -330,7 +328,7 @@ const rules = {
       }
     } else {
       let checkSquare = document.getElementById(`${currRow + 1}${currCol}`);
-      if (!checkSquare.hasChildNodes()) {
+      if (checkSquare && !checkSquare.hasChildNodes()) {
         if (globalGreyCheck(checkSquare, currColor, check)) return true;
         checkSquare = document.getElementById(`${currRow + 2}${currCol}`);
         if (currRow == 1 && !checkSquare.hasChildNodes()) {
@@ -419,7 +417,9 @@ function handleCastling(currKing, currColor) {
       let checkSquare = document.getElementById("0" + leftSquareID);
       let checkSquare2 = document.getElementById("0" + leftSquare2ID);
       let checkSquare3 = document.getElementById("0" + leftSquare3ID);
-      if (checkSquare.children[0].classList.contains("greyCircle") && !checkSquare3.hasChildNodes()) {
+      if (checkSquare && 
+          checkSquare.children[0].classList.contains("greyCircle") && 
+          !checkSquare3.hasChildNodes()) {
         row = 0;
         col = 2;
         if (!incheck(currKing, [row, col])) {
@@ -491,6 +491,7 @@ function handleCastlingLogic(pieceType,pieceColor,currKingPos) {
     let rook = rookSquare.firstChild;
     rookSquare.removeChild(rook);
     checkSquare.append(rook);
+    castlingPieces[`${currTurn}King`] = true;
   }
 }
 function createGreyCircle() {
@@ -523,6 +524,7 @@ function HandleTurnChange() {
     console.log("promote black");
     promotion(pieceColor, pieceParent);
   }
+  checkforcheck(pieceColor);
   if (pieceType == "rook" || pieceType == "king") handleCastlingLogic(pieceType,pieceColor,pieceParent.id);
   handleEnPassant();
   if (pieceType == "pawn" && Math.abs(selectedPiece.dataset.initialRow - pieceRow) == 2) 
@@ -540,7 +542,6 @@ function HandleTurnChange() {
   nondragpieces.forEach(function (element) {
     element.draggable = false;
   });
-  checkforcheck(prevTurn);
 }
 
 function checkforcheck(prevTurn) {
@@ -551,13 +552,18 @@ function checkforcheck(prevTurn) {
     if (checkmate()) {
       // Game ended
       console.log("checkmateeeeaeeeeeeeeeeeeeeeeeee");
-      handleEndGame(prevTurn);
+      handleEndGame(`${prevTurn} won!!!`);
     }
   } else {
     let toRemove = document.querySelectorAll(".incheck");
     toRemove.forEach(function (element) {
       element.classList.remove("incheck");
     });
+    if (checkmate()) {
+      // Game ended
+      console.log("stalemate");
+      handleEndGame("stalemate");
+    }
   }
 }
 
@@ -594,8 +600,7 @@ function incheck(currKing, currPosition, blockCheck) {
       if (index < 0 || index > 7) break;
       if (blockCheck) {
         if (UpDown && index == blockCheckRow && currCol == blockCheckCol) break;
-        else if (!UpDown && index == blockCheckCol && currRow == blockCheckRow)
-          break;
+        else if (!UpDown && index == blockCheckCol && currRow == blockCheckRow) break;
       }
       if (
         checkSquare.hasChildNodes() &&
@@ -614,6 +619,7 @@ function incheck(currKing, currPosition, blockCheck) {
     checkLine(currCol, false, -1)
   )
     return true;
+
   // check the diags
   function checkDiag(row, col, iterateRow, iterateCol) {
     while (true) {
@@ -736,11 +742,11 @@ function checkmate() {
   return check;
 }
 
-function handleEndGame(prevTurn) {
+function handleEndGame(endGameCondition) {
   let board = document.getElementById("board");
   let div = document.createElement("div");
   div.id = "gameover";
-  div.textContent = `${prevTurn} Won!!!!`;
+  div.textContent = `${endGameCondition}`;
   let divButton = document.createElement("button");
   divButton.id = "refreshButton";
   div.onclick = function () {
