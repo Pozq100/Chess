@@ -75,7 +75,7 @@ const rules = {
       return;
     }
     removeGreyCircle();
-    selectedPiece = element;
+    if (!check) selectedPiece = element;
     // up is currRow - 1, down is currRow + 1, left is currCol - 1, right is currCol + 1
     function create(index, UpDown, iterate) {
       while (true) {
@@ -108,7 +108,7 @@ const rules = {
       return;
     }
     removeGreyCircle();
-    selectedPiece = element;
+    if (!check) selectedPiece = element;
     // i - 2: j - 1, j + 1
     // i - 1: j - 2, j + 2
     // i + 1: j - 2, j + 2
@@ -152,7 +152,7 @@ const rules = {
       return;
     }
     removeGreyCircle();
-    selectedPiece = element;
+    if (!check) selectedPiece = element;
     // i + 1, j - 1
     // i + 1, j + 1
     // i - 1, j - 1
@@ -189,7 +189,7 @@ const rules = {
       return;
     }
     removeGreyCircle();
-    selectedPiece = element;
+    if (!check) selectedPiece = element;
 
     function createDiag(row, col, iterateRow, iterateCol) {
       while (true) {
@@ -248,7 +248,7 @@ const rules = {
       return;
     }
     removeGreyCircle();
-    selectedPiece = element;
+    if (!check) selectedPiece = element;
     let topleftRow = currRow - 1;
     let topleftCol = currCol - 1;
     for (let i = 0; i < 3; i++) {
@@ -257,16 +257,19 @@ const rules = {
         for (let j = 0; j < 3; j++) {
           let col = topleftCol + j;
           if (col >= 0 && col < 8) {
-            let checkSquare = document.getElementById(`${row}${col}`);
-            if (!checkSquare.hasChildNodes()) {
-              if (!incheck(element, [row, col])) {
-                if (check) return true;
-                greyCircle = createGreyCircle();
-                checkSquare.appendChild(greyCircle);
-              }
-            } else {
-              if (!incheck(element, [row, col])) {
-                if (capturable(currColor, checkSquare, check)) return true;
+            if (!(row == currRow && col == currCol)) {
+              let checkSquare = document.getElementById(`${row}${col}`);
+              if (!checkSquare.hasChildNodes()) {
+                if (!incheck(element, [row, col])) {
+                  if (check) return true;
+                  greyCircle = createGreyCircle();
+                  checkSquare.appendChild(greyCircle);
+                }
+              } else {
+                if (!incheck(element, [row, col])) {
+                  console.log(row,col);
+                  if (capturable(currColor, checkSquare, check)) return true;
+                }
               }
             }
           }
@@ -285,7 +288,7 @@ const rules = {
       return;
     }
     removeGreyCircle();
-    selectedPiece = element;
+    if (!check) selectedPiece = element;
 
     checkLeftSquare = document.getElementById(`${currRow}${currCol - 1}`);
     checkRightSquare = document.getElementById(`${currRow}${currCol + 1}`);
@@ -524,7 +527,6 @@ function HandleTurnChange() {
     console.log("promote black");
     promotion(pieceColor, pieceParent);
   }
-  checkforcheck(pieceColor);
   if (pieceType == "rook" || pieceType == "king") handleCastlingLogic(pieceType,pieceColor,pieceParent.id);
   handleEnPassant();
   if (pieceType == "pawn" && Math.abs(selectedPiece.dataset.initialRow - pieceRow) == 2) 
@@ -542,6 +544,7 @@ function HandleTurnChange() {
   nondragpieces.forEach(function (element) {
     element.draggable = false;
   });
+  checkforcheck(prevTurn);
 }
 
 function checkforcheck(prevTurn) {
@@ -736,6 +739,8 @@ function checkmate() {
   allyPieces.forEach((eachPiece) => {
     let pieceType = Array.from(eachPiece.classList)[2];
     if (rules[`${pieceType}_rule`](eachPiece, true)) {
+      // if rules is true that means the following allyPiece is able to block the check or
+      // the king is able to move out of the check
       check = false;
     }
   });
@@ -905,6 +910,16 @@ function changeTurn() {
 }
 
 function checkTurn() {
-  console.log(currTurn);
+  const allyPieces = document.querySelectorAll(`.${currTurn}`);
+  let check = true;
+  allyPieces.forEach((eachPiece) => {
+    let pieceType = Array.from(eachPiece.classList)[2];
+    if (rules[`${pieceType}_rule`](eachPiece, true)) {
+      // if rules is true that means the following allyPiece is able to block the check or
+      // the king is able to move out of the check
+      check = false;
+    }
+  });
+  console.log(check);
 }
 load();
