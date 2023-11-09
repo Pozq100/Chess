@@ -276,7 +276,7 @@ const rules = {
         }
       }
     }
-    handleCastling(element, currColor);
+    if (!incheck(element)) handleCastling(element, currColor);
   },
 
   pawn_rule: function (element, check) {
