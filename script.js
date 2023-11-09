@@ -415,7 +415,7 @@ function handleCastling(currKing, currColor) {
     if (!castlingPieces["whiteRightRook"]) {
       let checkSquare = document.getElementById(rightSquareID);
       let checkSquare2 = document.getElementById(rightSquare2ID);
-      if (checkSquare.children[0].classList.contains("greyCircle")) {
+      if (checkSquare.children[0].classList.contains("greyCircle") && !checkSquare2.hasChildNodes()) {
         row = 7;
         col = 6;
         if (!incheck(currKing, [row, col])) {
@@ -446,7 +446,7 @@ function handleCastling(currKing, currColor) {
     if (!castlingPieces["blackRightRook"]) {
       let checkSquare = document.getElementById("0" + rightSquareID);
       let checkSquare2 = document.getElementById("0" + rightSquare2ID);
-      if (checkSquare.children[0].classList.contains("greyCircle")) {
+      if (checkSquare.children[0].classList.contains("greyCircle") && !checkSquare2.hasChildNodes()) {
         row = 0;
         col = 6;
         if (!incheck(currKing, [row, col])) {
