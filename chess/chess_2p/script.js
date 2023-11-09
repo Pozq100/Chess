@@ -1,3 +1,9 @@
+// Uncompleted things
+// Stalemate from repeated moves
+// Stalemate from lack of materials
+// Stalemate button
+// Resignation (FF15)
+
 const pieces = [
   "rook",
   "knight",
@@ -787,18 +793,32 @@ function checkmate() {
   return check;
 }
 
+function endTestBtn() {
+  handleEndGame("Game Ended for Test");
+}
+
 function handleEndGame(endGameCondition) {
   let board = document.getElementById("board");
   let div = document.createElement("div");
   div.id = "gameover";
   div.textContent = `${endGameCondition}`;
+
   let divButton = document.createElement("button");
   divButton.id = "refreshButton";
-  divButton.textContent = "Retry";
-  div.onclick = function () {
+  divButton.textContent = "Restart";
+  divButton.onclick = function () {
     refresh();
   };
+
+  let homeButton = document.createElement("button");
+  homeButton.id = "homeButton";
+  homeButton.textContent = "Home Page";
+  homeButton.onclick = function () {
+    window.location.href = "../../index.html";
+  };
+
   div.appendChild(divButton);
+  div.appendChild(homeButton);
   board.appendChild(div);
 }
 

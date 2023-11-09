@@ -1,0 +1,5 @@
+black jack
+monopoly
+checkers
+chinese chess
+snakes and ladders

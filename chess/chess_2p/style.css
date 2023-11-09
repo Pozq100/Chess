@@ -100,13 +100,27 @@
   display: grid;
   justify-content: center;
   color: white;
+  align-items: center;
 }
 
 #refreshButton {
+  position: relative;
+  align-self: center;
   background: black;
-  color: white;
   height: 50px;
   width: 200px;
+  color: white;
+  margin: auto;
+}
+
+#homeButton {
+  position: relative;
+  align-self: center;
+  background: black;
+  height: 50px;
+  width: 200px;
+  color: white;
+  margin: auto;
 }
 
 #timer {
