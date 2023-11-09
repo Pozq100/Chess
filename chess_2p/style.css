@@ -22,6 +22,9 @@
 #side {
   height: 640px;
   width: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .blacksquare,
@@ -103,4 +106,26 @@
   background: black;
   height: 50px;
   width: 200px;
+}
+
+#timer {
+  position: absolute;
+  height: 300px;
+  width: 300px;
+}
+
+#whitetimer,
+#blacktimer {
+  position: absolute;
+  height: 120px;
+  width: 300px;
+}
+
+#whitetimer {
+  bottom: 0px;
+  background: beige;
+}
+
+#blacktimer {
+  background: rgb(58, 54, 54);
 }

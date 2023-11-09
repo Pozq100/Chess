@@ -1,6 +1,3 @@
-// what else is missig
-// en passant
-
 const pieces = [
   "rook",
   "knight",
