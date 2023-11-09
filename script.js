@@ -946,18 +946,4 @@ function changeTurn() {
   }
 }
 
-function checkTurn() {
-  const allyPieces = document.querySelectorAll(`.${currTurn}`);
-  let check = true;
-  allyPieces.forEach((eachPiece) => {
-    let pieceType = Array.from(eachPiece.classList)[2];
-    if (rules[`${pieceType}_rule`](eachPiece, true)) {
-      // if rules is true that means the following allyPiece is able to block the check or
-      // the king is able to move out of the check
-      check = false;
-    }
-  });
-  console.log(check);
-  console.log(currTurn);
-}
 load();
