@@ -267,8 +267,12 @@ const rules = {
                 }
               } else {
                 if (!incheck(element, [row, col])) {
-                  console.log(row, col);
-                  if (capturable(currColor, checkSquare, check)) return true;
+                  if (check) return true;
+                  const otherPiece = checkSquare.children[0];
+                  const otherPieceColor = Array.from(otherPiece.classList)[1];
+                  if (otherPieceColor != currColor) {
+                    checkSquare.classList.add("capturable");
+                  }
                 }
               }
             }
