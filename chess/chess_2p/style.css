@@ -104,6 +104,7 @@
 
 #refreshButton {
   background: black;
+  color: white;
   height: 50px;
   width: 200px;
 }

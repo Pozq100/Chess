@@ -264,10 +264,10 @@ const rules = {
                 }
               } else {
                 if (!incheck(element, [row, col])) {
+                  if (check) return true;
                   const otherPiece = checkSquare.children[0];
                   const otherPieceColor = Array.from(otherPiece.classList)[1];
                   if (otherPieceColor != currColor) {
-                    if (check) return true;
                     checkSquare.classList.add("capturable");
                   }
                 }
@@ -416,10 +416,7 @@ function handleCastling(currKing, currColor) {
     if (!castlingPieces["whiteRightRook"]) {
       let checkSquare = document.getElementById(rightSquareID);
       let checkSquare2 = document.getElementById(rightSquare2ID);
-      if (
-        checkSquare.children[0].classList.contains("greyCircle") &&
-        !checkSquare2.hasChildNodes()
-      ) {
+      if (checkSquare.children[0].classList.contains("greyCircle") && !checkSquare2.hasChildNodes()) {
         row = 7;
         col = 6;
         if (!incheck(currKing, [row, col])) {
@@ -450,10 +447,7 @@ function handleCastling(currKing, currColor) {
     if (!castlingPieces["blackRightRook"]) {
       let checkSquare = document.getElementById("0" + rightSquareID);
       let checkSquare2 = document.getElementById("0" + rightSquare2ID);
-      if (
-        checkSquare.children[0].classList.contains("greyCircle") &&
-        !checkSquare2.hasChildNodes()
-      ) {
+      if (checkSquare.children[0].classList.contains("greyCircle") && !checkSquare2.hasChildNodes()) {
         row = 0;
         col = 6;
         if (!incheck(currKing, [row, col])) {
@@ -587,6 +581,7 @@ function HandleTurnChange() {
 }
 
 function checkforcheck(prevTurn) {
+  console.log("checking");
   // check if the curr king is in check
   const currKing = document.getElementsByClassName(`piece ${currTurn} king`);
   if (incheck(currKing[0])) {
@@ -794,7 +789,6 @@ function handleEndGame(endGameCondition) {
   div.textContent = `${endGameCondition}`;
   let divButton = document.createElement("button");
   divButton.id = "refreshButton";
-  divButton.textContent = "Retry";
   div.onclick = function () {
     refresh();
   };
@@ -823,7 +817,7 @@ function promotion(color, ID) {
     createDiv.className = "piece";
     createDiv.classList.add(color);
     createDiv.classList.add(currPiece);
-    createDiv.style = `background-image: url(../images/${color}_${currPiece}.png)`;
+    createDiv.style = `background-image: url(./images/${color}_${currPiece}.png)`;
     createDiv.onclick = function () {
       promote(ID, currPiece, color);
     };
@@ -837,7 +831,7 @@ function promote(square, piece, color) {
   newPiece.className = "piece";
   newPiece.classList.add(color);
   newPiece.classList.add(piece);
-  newPiece.style = `background-image: url(../images/${color}_${piece}.png)`;
+  newPiece.style = `background-image: url(./images/${color}_${piece}.png)`;
   newPiece.addEventListener("click", rules[`${piece}_rule`]);
   newPiece.addEventListener("dragstart", rules[`${piece}_rule`]);
   square.removeChild(square.lastChild);
@@ -887,7 +881,7 @@ function load() {
         createPiece.draggable = true;
         createPiece.classList.add(currColor);
         createPiece.classList.add(currPiece);
-        createPiece.style = `background-image: url(../images/${currColor}_${currPiece}.png)`;
+        createPiece.style = `background-image: url(./images/${currColor}_${currPiece}.png)`;
         createPiece.addEventListener("click", rules[`${currPiece}_rule`]);
         createPiece.addEventListener("dragstart", rules[`${currPiece}_rule`]);
         div.appendChild(createPiece);
