@@ -419,7 +419,10 @@ function handleCastling(currKing, currColor) {
     if (!castlingPieces["whiteRightRook"]) {
       let checkSquare = document.getElementById(rightSquareID);
       let checkSquare2 = document.getElementById(rightSquare2ID);
-      if (checkSquare.children[0].classList.contains("greyCircle") && !checkSquare2.hasChildNodes()) {
+      if (
+        checkSquare.children[0].classList.contains("greyCircle") &&
+        !checkSquare2.hasChildNodes()
+      ) {
         row = 7;
         col = 6;
         if (!incheck(currKing, [row, col])) {
@@ -450,7 +453,10 @@ function handleCastling(currKing, currColor) {
     if (!castlingPieces["blackRightRook"]) {
       let checkSquare = document.getElementById("0" + rightSquareID);
       let checkSquare2 = document.getElementById("0" + rightSquare2ID);
-      if (checkSquare.children[0].classList.contains("greyCircle") && !checkSquare2.hasChildNodes()) {
+      if (
+        checkSquare.children[0].classList.contains("greyCircle") &&
+        !checkSquare2.hasChildNodes()
+      ) {
         row = 0;
         col = 6;
         if (!incheck(currKing, [row, col])) {
@@ -791,6 +797,7 @@ function handleEndGame(endGameCondition) {
   div.textContent = `${endGameCondition}`;
   let divButton = document.createElement("button");
   divButton.id = "refreshButton";
+  document.getElementById("refreshButton").innerHTML = "<p>Retry</p>";
   div.onclick = function () {
     refresh();
   };
@@ -819,7 +826,7 @@ function promotion(color, ID) {
     createDiv.className = "piece";
     createDiv.classList.add(color);
     createDiv.classList.add(currPiece);
-    createDiv.style = `background-image: url(./images/${color}_${currPiece}.png)`;
+    createDiv.style = `background-image: url(../images/${color}_${currPiece}.png)`;
     createDiv.onclick = function () {
       promote(ID, currPiece, color);
     };
@@ -833,7 +840,7 @@ function promote(square, piece, color) {
   newPiece.className = "piece";
   newPiece.classList.add(color);
   newPiece.classList.add(piece);
-  newPiece.style = `background-image: url(./images/${color}_${piece}.png)`;
+  newPiece.style = `background-image: url(../images/${color}_${piece}.png)`;
   newPiece.addEventListener("click", rules[`${piece}_rule`]);
   newPiece.addEventListener("dragstart", rules[`${piece}_rule`]);
   square.removeChild(square.lastChild);
@@ -883,7 +890,7 @@ function load() {
         createPiece.draggable = true;
         createPiece.classList.add(currColor);
         createPiece.classList.add(currPiece);
-        createPiece.style = `background-image: url(./images/${currColor}_${currPiece}.png)`;
+        createPiece.style = `background-image: url(../images/${currColor}_${currPiece}.png)`;
         createPiece.addEventListener("click", rules[`${currPiece}_rule`]);
         createPiece.addEventListener("dragstart", rules[`${currPiece}_rule`]);
         div.appendChild(createPiece);
