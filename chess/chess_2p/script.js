@@ -56,7 +56,7 @@ function capturable(currPieceColor, parentofOther, check) {
     return;
   }
   if (otherPieceColor != currPieceColor) {
-    if (check) return true;  
+    if (check) return true;
     parentofOther.classList.add("capturable");
   }
 }
@@ -96,11 +96,13 @@ const rules = {
         if (globalGreyCheck(checkSquare, currColor, check)) return true;
       }
     }
-    if (create(currRow, true, -1) ||
-    create(currRow, true, 1) ||
-    create(currCol, false, 1) ||
-    create(currCol, false, -1)) return true;
-
+    if (
+      create(currRow, true, -1) ||
+      create(currRow, true, 1) ||
+      create(currCol, false, 1) ||
+      create(currCol, false, -1)
+    )
+      return true;
   },
 
   knight_rule: function (element, check) {
@@ -619,6 +621,23 @@ function stalemate() {
   if (checkmate()) {
     return true;
   }
+  const whitePieces = document.querySelectorAll(".white");
+  const blackPieces = document.querySelectorAll(".black");
+
+  const all_whitePieces = Array();
+  const all_blackPieces = Array();
+
+  whitePieces.forEach((eachPiece) => {
+    let pieceType = Array.from(eachPiece.classList)[2];
+    all_whitePieces.push({ pieceType });
+  });
+  blackPieces.forEach((eachPiece) => {
+    let pieceType = Array.from(eachPiece.classList)[2];
+    all_blackPieces.push({ pieceType });
+  });
+
+  console.log(all_whitePieces);
+  console.log(all_blackPieces);
 }
 
 function incheck(currKing, currPosition, blockCheck) {
@@ -982,7 +1001,6 @@ function changeTurn() {
   if (!promotionProgress) {
     if (currTurn == "white") currTurn = "black";
     else if (currTurn == "black") currTurn = "white";
-    checkforcheck();
   }
 }
 
