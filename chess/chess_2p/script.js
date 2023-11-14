@@ -1,6 +1,6 @@
 // Uncompleted things
 // Stalemate from repeated moves
-// Stalemate from lack of materials
+// Stalemate from lack of materials --> Double Check
 // Stalemate button
 // Resignation (FF15)
 
