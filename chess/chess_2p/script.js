@@ -56,7 +56,7 @@ function capturable(currPieceColor, parentofOther, check) {
     return;
   }
   if (otherPieceColor != currPieceColor) {
-    if (check) return true;
+    if (check) return true;  
     parentofOther.classList.add("capturable");
   }
 }
@@ -78,7 +78,7 @@ const rules = {
       return;
     }
     removeGreyCircle();
-    if (!check) selectedPiece = element;
+    selectedPiece = element;
     // up is currRow - 1, down is currRow + 1, left is currCol - 1, right is currCol + 1
     function create(index, UpDown, iterate) {
       while (true) {
@@ -112,7 +112,7 @@ const rules = {
       return;
     }
     removeGreyCircle();
-    if (!check) selectedPiece = element;
+    selectedPiece = element;
     // i - 2: j - 1, j + 1
     // i - 1: j - 2, j + 2
     // i + 1: j - 2, j + 2
@@ -156,7 +156,7 @@ const rules = {
       return;
     }
     removeGreyCircle();
-    if (!check) selectedPiece = element;
+    selectedPiece = element;
     // i + 1, j - 1
     // i + 1, j + 1
     // i - 1, j - 1
@@ -193,8 +193,7 @@ const rules = {
       return;
     }
     removeGreyCircle();
-    if (!check) selectedPiece = element;
-
+    selectedPiece = element;
     function createDiag(row, col, iterateRow, iterateCol) {
       while (true) {
         row += iterateRow;
@@ -252,7 +251,7 @@ const rules = {
       return;
     }
     removeGreyCircle();
-    if (!check) selectedPiece = element;
+    selectedPiece = element;
     let topleftRow = currRow - 1;
     let topleftCol = currCol - 1;
     for (let i = 0; i < 3; i++) {
@@ -296,7 +295,7 @@ const rules = {
       return;
     }
     removeGreyCircle();
-    if (!check) selectedPiece = element;
+    selectedPiece = element;
 
     checkLeftSquare = document.getElementById(`${currRow}${currCol - 1}`);
     checkRightSquare = document.getElementById(`${currRow}${currCol + 1}`);
@@ -794,7 +793,6 @@ function checkmate() {
     if (rules[`${pieceType}_rule`](eachPiece, true)) {
       // if rules is true that means the following allyPiece is able to block the check or
       // the king is able to move out of the check
-      console.log(pieceType);
       check = false;
     }
   });
