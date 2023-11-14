@@ -3,7 +3,6 @@
 // Stalemate from lack of materials --> Verify
 // Stalemate button
 // Resignation (FF15)
-// Fix Kings being able to be next to each other
 
 const pieces = [
   "rook",
@@ -820,6 +819,23 @@ function incheck(currKing, currPosition, blockCheck) {
       !(blockCheckRow == currRow - 1 && blockCheckCol == currCol + 1)
     ) {
       if (checkChild(["pawn"], checkSquare)) return true;
+    }
+  }
+
+  // check if next to a king
+  for (let topleftrow = currRow - 1;topleftrow < currRow + 2; topleftrow++) {
+    for (let topleftcol = currCol - 1;topleftcol < currCol + 2; topleftcol++) {
+      if (topleftcol >= 0 && topleftcol < 8 && topleftrow >= 0 && topleftrow < 8) {
+        checkSquare = document.getElementById(`${topleftrow}${topleftcol}`);
+        if (
+          checkSquare &&
+        checkSquare.hasChildNodes() &&
+        !checkSquare.children[0].classList.contains("greyCircle") &&
+        selectedPiece != checkSquare.children[0]
+        ) {
+          if (checkChild(["king"], checkSquare)) return true;
+        }
+      }
     }
   }
   return false;
