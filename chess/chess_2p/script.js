@@ -936,7 +936,10 @@ function load() {
         removeGreyCircle();
         HandleTurnChange();
       }
-      if (square.lastChild.className == "greyCircle") {
+      if (!square.hasChildNodes()) {
+        selectedPiece = null;
+        removeGreyCircle();
+      } else if (square.lastChild.className == "greyCircle") {
         square.appendChild(selectedPiece);
         if (document.getElementById(square.children[0].dataset.toBeRemoved)) {
           let removeSquare = document.getElementById(
@@ -956,7 +959,10 @@ function load() {
         removeGreyCircle();
         HandleTurnChange();
       }
-      if (square.lastChild.className == "greyCircle") {
+      if (!square.hasChildNodes()) {
+        selectedPiece = null;
+        removeGreyCircle();
+      } else if (square.lastChild.className == "greyCircle") {
         square.appendChild(selectedPiece);
         if (document.getElementById(square.children[0].dataset.toBeRemoved)) {
           let removeSquare = document.getElementById(
