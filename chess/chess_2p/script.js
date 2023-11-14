@@ -15,6 +15,25 @@ const pieces = [
   "rook",
 ];
 
+var all_whitePieces = Array();
+var all_blackPieces = Array();
+
+function allPieces() {
+  all_whitePieces = Array();
+  all_blackPieces = Array();
+
+  const whitePieces = document.querySelectorAll(".white");
+  const blackPieces = document.querySelectorAll(".black");
+  whitePieces.forEach((eachPiece) => {
+    let pieceType = Array.from(eachPiece.classList)[2];
+    all_whitePieces.push({ pieceType });
+  });
+  blackPieces.forEach((eachPiece) => {
+    let pieceType = Array.from(eachPiece.classList)[2];
+    all_blackPieces.push({ pieceType });
+  });
+}
+
 const promotePiece = ["rook", "knight", "bishop", "queen"];
 
 var castlingPieces = {
@@ -618,23 +637,11 @@ function checkforcheck(prevTurn) {
 }
 
 function stalemate() {
+  allPieces();
+
   if (checkmate()) {
     return true;
   }
-  const whitePieces = document.querySelectorAll(".white");
-  const blackPieces = document.querySelectorAll(".black");
-
-  const all_whitePieces = Array();
-  const all_blackPieces = Array();
-
-  whitePieces.forEach((eachPiece) => {
-    let pieceType = Array.from(eachPiece.classList)[2];
-    all_whitePieces.push({ pieceType });
-  });
-  blackPieces.forEach((eachPiece) => {
-    let pieceType = Array.from(eachPiece.classList)[2];
-    all_blackPieces.push({ pieceType });
-  });
 
   if (all_whitePieces.length == 2 && all_blackPieces.length == 2) {
     if (
