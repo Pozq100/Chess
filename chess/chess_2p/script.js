@@ -636,6 +636,18 @@ function stalemate() {
     all_blackPieces.push({ pieceType });
   });
 
+  if (all_whitePieces.length == 2 && all_blackPieces.length == 2) {
+    if (
+      !all_blackPieces.includes("rook") &&
+      !all_blackPieces.includes("queen") &&
+      !all_blackPieces.includes("pawn") &&
+      !all_whitePieces.includes("rook") &&
+      !all_whitePieces.includes("queen") &&
+      !all_whitePieces.includes("pawn")
+    )
+      return true;
+  }
+
   console.log(all_whitePieces);
   console.log(all_blackPieces);
 }
