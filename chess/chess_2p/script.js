@@ -607,11 +607,17 @@ function checkforcheck(prevTurn) {
     toRemove.forEach(function (element) {
       element.classList.remove("incheck");
     });
-    if (checkmate()) {
+    if (stalemate()) {
       // Game ended
       console.log("stalemate");
       handleEndGame("stalemate");
     }
+  }
+}
+
+function stalemate() {
+  if (checkmate()) {
+    return true;
   }
 }
 
