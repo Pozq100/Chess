@@ -55,8 +55,8 @@ function capturable(currPieceColor, parentofOther, check) {
   if (incheck(currKing[0], null, [currRow, currCol])) {
     return;
   }
-  if (check) return true;
   if (otherPieceColor != currPieceColor) {
+    if (check) return true;
     parentofOther.classList.add("capturable");
   }
 }
@@ -96,10 +96,11 @@ const rules = {
         if (globalGreyCheck(checkSquare, currColor, check)) return true;
       }
     }
-    create(currRow, true, -1);
-    create(currRow, true, 1);
-    create(currCol, false, 1);
-    create(currCol, false, -1);
+    if (create(currRow, true, -1) ||
+    create(currRow, true, 1) ||
+    create(currCol, false, 1) ||
+    create(currCol, false, -1)) return true;
+
   },
 
   knight_rule: function (element, check) {
@@ -166,7 +167,7 @@ const rules = {
         col += iterateCol;
         checkSquare = document.getElementById(`${row}${col}`);
         if (row < 0 || row > 7 || col < 0 || col > 7) break;
-        if (checkSquare.hasChildNodes()) {
+        if (checkSquare && checkSquare.hasChildNodes()) {
           if (capturable(currColor, checkSquare, check)) return true;
           break;
         }
@@ -200,7 +201,7 @@ const rules = {
         col += iterateCol;
         checkSquare = document.getElementById(`${row}${col}`);
         if (row < 0 || row > 7 || col < 0 || col > 7) break;
-        if (checkSquare.hasChildNodes()) {
+        if (checkSquare && checkSquare.hasChildNodes()) {
           if (capturable(currColor, checkSquare, check)) return true;
           break;
         }
@@ -225,7 +226,7 @@ const rules = {
           checkSquare = document.getElementById(`${index}${currCol}`);
         else checkSquare = document.getElementById(`${currRow}${index}`);
         if (index < 0 || index > 7) break;
-        if (checkSquare.hasChildNodes()) {
+        if (checkSquare && checkSquare.hasChildNodes()) {
           if (capturable(currColor, checkSquare, check)) return true;
           break;
         }
@@ -793,6 +794,7 @@ function checkmate() {
     if (rules[`${pieceType}_rule`](eachPiece, true)) {
       // if rules is true that means the following allyPiece is able to block the check or
       // the king is able to move out of the check
+      console.log(pieceType);
       check = false;
     }
   });
