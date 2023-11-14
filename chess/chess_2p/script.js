@@ -1,8 +1,9 @@
 // Uncompleted things
 // Stalemate from repeated moves
-// Stalemate from lack of materials --> Double Check
+// Stalemate from lack of materials --> Verify
 // Stalemate button
 // Resignation (FF15)
+// Fix Kings being able to be next to each other
 
 const pieces = [
   "rook",
