@@ -643,6 +643,20 @@ function stalemate() {
     return true;
   }
 
+  if (all_whitePieces.length == 3 && all_blackPieces.length == 3) {
+    if (
+      !all_blackPieces.includes("rook") &&
+      !all_blackPieces.includes("queen") &&
+      !all_blackPieces.includes("pawn") &&
+      !all_blackPieces.includes("bishop") &&
+      !all_whitePieces.includes("rook") &&
+      !all_whitePieces.includes("queen") &&
+      !all_whitePieces.includes("pawn") &&
+      !all_whitePieces.includes("bishop")
+    )
+      return true;
+  }
+
   if (all_whitePieces.length == 2 && all_blackPieces.length == 2) {
     if (
       !all_blackPieces.includes("rook") &&
@@ -654,6 +668,7 @@ function stalemate() {
     )
       return true;
   }
+  if (all_whitePieces.length == 1 && all_blackPieces.length == 1) return true;
 
   console.log(all_whitePieces);
   console.log(all_blackPieces);
@@ -823,15 +838,20 @@ function incheck(currKing, currPosition, blockCheck) {
   }
 
   // check if next to a king
-  for (let topleftrow = currRow - 1;topleftrow < currRow + 2; topleftrow++) {
-    for (let topleftcol = currCol - 1;topleftcol < currCol + 2; topleftcol++) {
-      if (topleftcol >= 0 && topleftcol < 8 && topleftrow >= 0 && topleftrow < 8) {
+  for (let topleftrow = currRow - 1; topleftrow < currRow + 2; topleftrow++) {
+    for (let topleftcol = currCol - 1; topleftcol < currCol + 2; topleftcol++) {
+      if (
+        topleftcol >= 0 &&
+        topleftcol < 8 &&
+        topleftrow >= 0 &&
+        topleftrow < 8
+      ) {
         checkSquare = document.getElementById(`${topleftrow}${topleftcol}`);
         if (
           checkSquare &&
-        checkSquare.hasChildNodes() &&
-        !checkSquare.children[0].classList.contains("greyCircle") &&
-        selectedPiece != checkSquare.children[0]
+          checkSquare.hasChildNodes() &&
+          !checkSquare.children[0].classList.contains("greyCircle") &&
+          selectedPiece != checkSquare.children[0]
         ) {
           if (checkChild(["king"], checkSquare)) return true;
         }
