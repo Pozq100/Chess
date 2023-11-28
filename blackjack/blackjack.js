@@ -29,6 +29,14 @@ function PullFromDeck() {
   let RNG = Math.floor(Math.random() * 52);
   let newCard = Cards[RNG];
   let Val_of_Card = 0;
+  let CardNum = "";
+  for (let i = 0; i < newCard.length;i++) {
+    if(newCard[i] == "_") {
+        break;
+    }
+    CardNum += newCard[i];
+  }
+
   if (CardNum == "ace") {
     Val_of_Card = 1;
   } else if (CardNum == "king" || CardNum == "queen" || CardNum == "jack") {
