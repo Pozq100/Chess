@@ -26,32 +26,50 @@ function CreateDeck() {
   }
 }
 
+function PlayerAction() {
+  // Should be called when player "Pulls from Deck"
+  PullFromDeck();
+  CheckHandValue();
+}
+
+function CheckHandValue() {
+  // Should check the total value of the hand of the player interacting
+  let Val_of_Card = 0;
+  for (let j = 0; j < PlayerHand.length; j++) {
+    let CardNum = "";
+
+    for (let i = 0; i < PlayerHand[j].length; i++) {
+      if (PlayerHand[j][i] == "_") {
+        break;
+      }
+      CardNum += PlayerHand[j][i];
+    }
+
+    if (CardNum == "ace") {
+      Val_of_Card += 1;
+    } else if (CardNum == "king" || CardNum == "queen" || CardNum == "jack") {
+      Val_of_Card += 10;
+    } else {
+      Val_of_Card += parseInt(CardNum);
+    }
+  }
+  if (Val_of_Card > 21) {
+    // Set event for loss
+    location.reload();
+  }
+  console.log(Val_of_Card);
+}
+
 function PullFromDeck() {
+  // Pull random card, remove from deck, add to player hand
   let RNG = Math.floor(Math.random() * Cards.length);
   let newCard = Cards[RNG];
   Cards.splice(RNG, 1);
   PlayerHand.push(newCard);
 
-  //   let Val_of_Card = 0;
-  //   let CardNum = "";
-  //   for (let i = 0; i < newCard.length;i++) {
-  //     if(newCard[i] == "_") {
-  //         break;
-  //     }
-  //     CardNum += newCard[i];
-  //   }
-
-  //   if (CardNum == "ace") {
-  //     Val_of_Card = 1;
-  //   } else if (CardNum == "king" || CardNum == "queen" || CardNum == "jack") {
-  //     Val_of_Card = 10;
-  //   } else {
-  //     Val_of_Card = parseInt(CardNum);
-  //   }
   console.log(newCard);
   console.log(PlayerHand);
-  console.log(Cards);
-  //   console.log(Val_of_Card);
+  console.log(Cards.length);
   console.log("\n");
 }
 
